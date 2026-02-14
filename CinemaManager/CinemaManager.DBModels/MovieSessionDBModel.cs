@@ -1,12 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CinemaManager.Common.Enums;
 
 namespace CinemaManager.DBModels
 {
-    internal class MovieSessionDBModel
+    public class MovieSessionDBModel
     {
+        public Guid Id { get; }
+        public Guid CinemaHallId { get; }
+        public string MovieName { get; set; }
+        public FilmGenre FilmGenre { get; set; }
+        public int YearOfRelease { get; set; }
+        public DateTime StartTime { get; set; }
+        public int DurationInMinutes { get; set; }
+
+        public MovieSessionDBModel(Guid cinemaHallId, string movieName, FilmGenre filmGenre, int yearOfRelease, DateTime startTime, int durationInMinutes)
+        {
+            Id = Guid.NewGuid();
+            CinemaHallId = cinemaHallId;
+            MovieName = movieName;
+            FilmGenre = filmGenre;
+            YearOfRelease = yearOfRelease;
+            StartTime = startTime;
+            DurationInMinutes = durationInMinutes;
+        }
     }
 }
