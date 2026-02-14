@@ -1,12 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CinemaManager.Common.Enums
+﻿namespace CinemaManager.Common.Enums
 {
     public enum FilmGenre
     {
+        Action,
+        Comedy,
+        Drama,
+        Horror,
+        SciFi,
+        Thriller,
+        Romance,
+        Animation,
+        Documentary,
+        Fantasy
     }
 }
