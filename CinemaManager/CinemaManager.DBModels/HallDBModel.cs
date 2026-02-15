@@ -2,14 +2,14 @@
 
 namespace CinemaManager.DBModels
 {
-    public class CinemaHallDBModel
+    public class HallDBModel
     {
         public Guid Id { get; }
         public string Name { get; set; }
         public int NumberOfSeats { get; set; }
         public CinemaHallType CinemaHallType { get; set; }
 
-        public CinemaHallDBModel(string name, int numberOfSeats, CinemaHallType cinemaHallType)
+        public HallDBModel(string name, int numberOfSeats, CinemaHallType cinemaHallType)
         {
             Id = Guid.NewGuid();
             Name = name;

@@ -2,7 +2,7 @@
 
 namespace CinemaManager.DBModels
 {
-    public class MovieSessionDBModel
+    public class SessionDBModel
     {
         public Guid Id { get; }
         public Guid CinemaHallId { get; }
@@ -12,7 +12,7 @@ namespace CinemaManager.DBModels
         public DateTime StartTime { get; set; }
         public int DurationInMinutes { get; set; }
 
-        public MovieSessionDBModel(Guid cinemaHallId, string movieName, FilmGenre filmGenre, int yearOfRelease, DateTime startTime, int durationInMinutes)
+        public SessionDBModel(Guid cinemaHallId, string movieName, FilmGenre filmGenre, int yearOfRelease, DateTime startTime, int durationInMinutes)
         {
             Id = Guid.NewGuid();
             CinemaHallId = cinemaHallId;
