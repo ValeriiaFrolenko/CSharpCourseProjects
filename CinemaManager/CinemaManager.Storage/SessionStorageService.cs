@@ -26,5 +26,21 @@ namespace CinemaManager.Storage
                 return null;
             return new SessionUIModel(sessionDB);
         }
+
+        public List<SessionUIModel> GetSessionsByMovieName(string movieName)
+        {
+            return Storage.sessions.Values
+                .Where(s => s.MovieName.Equals(movieName, StringComparison.OrdinalIgnoreCase))
+                .Select(sessionDB => new SessionUIModel(sessionDB))
+                .ToList();
+        }
+
+        public List<SessionUIModel> GetSessionsByHallName(string hallName)
+        {
+            var hallDB = Storage.halls.Values.FirstOrDefault(h => h.Name.Equals(hallName, StringComparison.OrdinalIgnoreCase));
+            if (hallDB == null)
+                return new List<SessionUIModel>();
+            return GetSessionsByHallId(hallDB.Id);
+        }
     }
 }

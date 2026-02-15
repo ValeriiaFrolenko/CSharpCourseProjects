@@ -18,6 +18,14 @@ public class HallStorageService
         var sessionsByHall = GroupSessionsByHall();
         return CreateHallUIModel(hallDB, sessionsByHall);
     }
+    public HallUIModel? GetHallByName(string name)
+    {
+        var hallDB = Storage.halls.Values.FirstOrDefault(h => h.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+        if (hallDB == null)
+            return null;
+        var sessionsByHall = GroupSessionsByHall();
+        return CreateHallUIModel(hallDB, sessionsByHall);
+    }
     private Dictionary<Guid, List<SessionUIModel>> GroupSessionsByHall()
     {
         return Storage.sessions.Values
