@@ -66,5 +66,9 @@ namespace CinemaManager.UIModels
 
         public int TotalDurationOfSessions => _sessions.Sum(s => s.DurationInMinutes);
 
+        public override string ToString()
+        {
+            return $"Hall: {Name}, Type: {CinemaHallType}, Seats: {NumberOfSeats}, Sessions: {Sessions.Count}, Total Duration: {TotalDurationOfSessions} min";
+        }
     }
 }

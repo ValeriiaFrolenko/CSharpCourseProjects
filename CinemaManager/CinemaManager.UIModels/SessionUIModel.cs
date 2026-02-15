@@ -76,6 +76,11 @@ namespace CinemaManager.UIModels
             set => _durationInMinutes = value;
         }
 
-        public DateTime EndTime => _startTime.AddMinutes(_durationInMinutes);  
+        public DateTime EndTime => _startTime.AddMinutes(_durationInMinutes);
+
+        public override string ToString()
+        {
+            return $"{MovieName} ({YearOfRelease}) - {FilmGenre}, {StartTime:dd.MM.yyyy HH:mm} - {EndTime:HH:mm}, {DurationInMinutes} min";
+        }
     }
 }
