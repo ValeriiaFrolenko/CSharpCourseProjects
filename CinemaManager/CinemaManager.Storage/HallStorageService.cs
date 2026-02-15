@@ -1,6 +1,35 @@
-﻿namespace CinemaManager.Storage
+﻿using CinemaManager.DBModels;
+using CinemaManager.Storage;
+using CinemaManager.UIModels;
+
+public class HallStorageService
 {
-    public class HallStorageService
+    public List<HallUIModel> GetAllHalls()
     {
+        var sessionsByHall = GroupSessionsByHall();
+        return Storage.halls.Values
+            .Select(hallDB => CreateHallUIModel(hallDB, sessionsByHall))
+            .ToList();
+    }
+    public HallUIModel? GetHallById(Guid id)
+    {
+        if (!Storage.halls.TryGetValue(id, out var hallDB))
+            return null;
+        var sessionsByHall = GroupSessionsByHall();
+        return CreateHallUIModel(hallDB, sessionsByHall);
+    }
+    private Dictionary<Guid, List<SessionUIModel>> GroupSessionsByHall()
+    {
+        return Storage.sessions.Values
+            .GroupBy(s => s.CinemaHallId)
+            .ToDictionary(
+                g => g.Key,
+                g => g.Select(s => new SessionUIModel(s)).ToList()
+            );
+    }
+    private HallUIModel CreateHallUIModel(HallDBModel hallDB, Dictionary<Guid, List<SessionUIModel>> sessionsByHall)
+    {
+        var sessions = sessionsByHall.GetValueOrDefault(hallDB.Id, new List<SessionUIModel>());
+        return new HallUIModel(hallDB, sessions);
     }
 }
