@@ -2,6 +2,7 @@
 using CinemaManager.Storage;
 using CinemaManager.UIModels;
 
+namespace CinemaManager.Storage;
 public class HallStorageService
 {
     public List<HallUIModel> GetAllHalls()
