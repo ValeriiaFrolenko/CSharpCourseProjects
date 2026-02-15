@@ -7,4 +7,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CinemaManager.Storage\CinemaManager.Storage.csproj" />
+    <ProjectReference Include="..\CinemaManager.UIModels\CinemaManager.UIModels.csproj" />
+  </ItemGroup>
+
 </Project>
