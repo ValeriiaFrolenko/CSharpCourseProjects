@@ -10,9 +10,7 @@ namespace CinemaManagerConsole
             Exit = 0,
             ViewAllHalls = 1,
             ViewHallByName = 2,
-            ViewSessionsByHall = 3,
-            ViewSessionsByMovieName = 4,
-            ViewAllSessions = 5,
+            ViewSessionsByHall = 3
         }
 
         private static SessionStorageService sessionStorageService = new();
@@ -20,11 +18,14 @@ namespace CinemaManagerConsole
 
         static void Main(string[] args)
         {
+            Console.WriteLine($"Total halls: {hallStorageService.GetHallsCount()}");
+            Console.WriteLine($"Total sessions: {sessionStorageService.GetSessionsCount()}");
+            Console.WriteLine();
+
             while (true)
             {
                 DisplayMenu();
                 var input = Console.ReadLine();
-
                 if (!Enum.TryParse(input, out MenuOption option))
                 {
                     Console.WriteLine("Invalid option. Please try again.\n");
@@ -44,8 +45,6 @@ namespace CinemaManagerConsole
             Console.WriteLine("1. View All Halls");
             Console.WriteLine("2. View Hall By Name");
             Console.WriteLine("3. View Sessions By Hall");
-            Console.WriteLine("4. View Sessions By Movie Name");
-            Console.WriteLine("5. View All Sessions");
             Console.WriteLine("0. Exit");
             Console.Write("Select an option: ");
         }
@@ -55,7 +54,7 @@ namespace CinemaManagerConsole
             switch (option)
             {
                 case MenuOption.ViewAllHalls:
-                    DisplayList(hallStorageService.GetAllHalls(), "No halls found.");
+                    ViewAllHallsInteractive();
                     break;
                 case MenuOption.ViewHallByName:
                     Console.Write("Enter hall name: ");
@@ -71,19 +70,72 @@ namespace CinemaManagerConsole
                         "No sessions found."
                     );
                     break;
-                case MenuOption.ViewSessionsByMovieName:
-                    Console.Write("Enter movie name: ");
-                    DisplayList(
-                        sessionStorageService.GetSessionsByMovieName(Console.ReadLine()!),
-                        "No sessions found."
-                    );
-                    break;
-                case MenuOption.ViewAllSessions:
-                    DisplayList(sessionStorageService.GetSessions(), "No sessions found.");
-                    break;
                 default:
                     Console.WriteLine("Invalid option. Please try again.\n");
                     break;
+            }
+        }
+
+        static void ViewAllHallsInteractive()
+        {
+            var hallsList = hallStorageService.GetHallsNameList();
+
+            if (hallsList.Count == 0)
+            {
+                Console.WriteLine("No halls found.");
+                Console.WriteLine();
+                return;
+            }
+
+            while (true)
+            {
+                for (int i = 0; i < hallsList.Count; i++)
+                {
+                    Console.WriteLine($"{i + 1}. {hallsList[i].Name}");
+                }
+
+                Console.Write("Enter hall number to view details (or press Enter to return): ");
+                var input = Console.ReadLine();
+
+                if (string.IsNullOrWhiteSpace(input))
+                {
+                    Console.WriteLine();
+                    return;
+                }
+
+                if (!int.TryParse(input, out int choice) || choice < 1 || choice > hallsList.Count)
+                {
+                    Console.WriteLine("Invalid hall number.");
+                    Console.WriteLine();
+                    continue;
+                }
+
+                var selectedHallId = hallsList[choice - 1].Id;
+                var hall = hallStorageService.GetHallById(selectedHallId);
+
+                if (hall == null)
+                {
+                    Console.WriteLine("Hall not found.");
+                    Console.WriteLine();
+                    continue;
+                }
+
+                Console.WriteLine(hall);
+
+                if (hall.Sessions.Count > 0)
+                {
+                    Console.WriteLine("Sessions:");
+                    foreach (var session in hall.Sessions)
+                    {
+                        Console.WriteLine(session);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("No sessions available.");
+                }
+
+                Console.WriteLine();
             }
         }
 
