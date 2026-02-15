@@ -10,16 +10,19 @@ public class HallStorageService
         return Storage.halls.Count;
     }
 
+    // Returns minimal hall information to avoid unnecessary creation of large HallUIModel objects
+    // when only basic information is needed
     public List<(Guid Id, string Name)> GetHallsNameList()
     {
         return Storage.halls.Values
             .Select(h => (h.Id, h.Name))
             .ToList();
     }
-    
+
     public List<HallUIModel> GetAllHalls()
     {
-        var sessionsByHall = GroupSessionsByHall();
+        // We group sessions by hall once to avoid doing it separately for each hall
+        var sessionsByHall = GroupSessionsByHall();     
         return Storage.halls.Values
             .Select(hallDB => CreateHallUIModel(hallDB, sessionsByHall))
             .ToList();

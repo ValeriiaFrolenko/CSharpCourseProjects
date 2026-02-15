@@ -78,6 +78,7 @@ namespace CinemaManagerConsole
 
         static void ViewAllHallsInteractive()
         {
+            // Load minimal data for the list to improve performance
             var hallsList = hallStorageService.GetHallsNameList();
 
             if (hallsList.Count == 0)

@@ -3,6 +3,8 @@ using CinemaManager.DBModels;
 
 namespace CinemaManager.Storage
 {
+    // Class is internal to restrict access only within CinemaManager.Storage assembly,
+    // but fields are public to simplify the logic
     internal static class Storage
     {
         public static Dictionary<Guid, HallDBModel> halls = new();
