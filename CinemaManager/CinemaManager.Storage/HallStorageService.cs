@@ -5,6 +5,18 @@ using CinemaManager.UIModels;
 namespace CinemaManager.Storage;
 public class HallStorageService
 {
+    public int GetHallsCount()
+    {
+        return Storage.halls.Count;
+    }
+
+    public List<(Guid Id, string Name)> GetHallsNameList()
+    {
+        return Storage.halls.Values
+            .Select(h => (h.Id, h.Name))
+            .ToList();
+    }
+    
     public List<HallUIModel> GetAllHalls()
     {
         var sessionsByHall = GroupSessionsByHall();
@@ -12,6 +24,7 @@ public class HallStorageService
             .Select(hallDB => CreateHallUIModel(hallDB, sessionsByHall))
             .ToList();
     }
+
     public HallUIModel? GetHallById(Guid id)
     {
         if (!Storage.halls.TryGetValue(id, out var hallDB))
@@ -19,6 +32,7 @@ public class HallStorageService
         var sessionsByHall = GroupSessionsByHall();
         return CreateHallUIModel(hallDB, sessionsByHall);
     }
+
     public HallUIModel? GetHallByName(string name)
     {
         var hallDB = Storage.halls.Values.FirstOrDefault(h => h.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
@@ -27,6 +41,7 @@ public class HallStorageService
         var sessionsByHall = GroupSessionsByHall();
         return CreateHallUIModel(hallDB, sessionsByHall);
     }
+
     private Dictionary<Guid, List<SessionUIModel>> GroupSessionsByHall()
     {
         return Storage.sessions.Values
@@ -36,6 +51,7 @@ public class HallStorageService
                 g => g.Select(s => new SessionUIModel(s)).ToList()
             );
     }
+
     private HallUIModel CreateHallUIModel(HallDBModel hallDB, Dictionary<Guid, List<SessionUIModel>> sessionsByHall)
     {
         var sessions = sessionsByHall.GetValueOrDefault(hallDB.Id, new List<SessionUIModel>());

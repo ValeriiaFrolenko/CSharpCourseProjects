@@ -4,7 +4,10 @@ namespace CinemaManager.Storage
 {
     public class SessionStorageService
     {
-
+        public int GetSessionsCount()
+        {
+            return Storage.sessions.Count;
+        }
         public List<SessionUIModel> GetSessionsByHallId(Guid hallId)
         {
             return Storage.sessions.Values
