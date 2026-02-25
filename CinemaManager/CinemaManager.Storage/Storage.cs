@@ -3,17 +3,32 @@ using CinemaManager.DBModels;
 
 namespace CinemaManager.Storage
 {
-    // Class is internal to restrict access only within CinemaManager.Storage assembly,
-    // but fields are public to simplify the logic
     internal static class Storage
     {
-        public static Dictionary<Guid, HallDBModel> halls = new();
-        public static Dictionary<Guid, SessionDBModel> sessions = new();
+        private static Dictionary<Guid, HallDBModel> halls = new();
+        private static Dictionary<Guid, SessionDBModel> sessions = new();
 
         static Storage()
         {
             InitializeData();
         }
+        public static bool TryGetHall(Guid id, out HallDBModel? hall)
+            => halls.TryGetValue(id, out hall);
+
+        public static bool TryGetSession(Guid id, out SessionDBModel? session)
+            => sessions.TryGetValue(id, out session);
+
+        public static IReadOnlyDictionary<Guid, HallDBModel> GetHalls()
+            => halls;
+
+        public static IReadOnlyDictionary<Guid, SessionDBModel> GetSessions()
+            => sessions;
+
+        public static void AddHall(HallDBModel hall)
+            => halls.Add(hall.Id, hall);
+
+        public static void AddSession(SessionDBModel session)
+            => sessions.Add(session.Id, session);
 
         private static void InitializeData()
         {
@@ -21,9 +36,9 @@ namespace CinemaManager.Storage
             var hall2 = new HallDBModel("Hall 2", 50, CinemaHallType.VIP);
             var hall3 = new HallDBModel("Hall 3", 150, CinemaHallType.Standard2D);
 
-            halls[hall1.Id] = hall1;
-            halls[hall2.Id] = hall2;
-            halls[hall3.Id] = hall3;
+            halls.Add(hall1.Id, hall1);
+            halls.Add(hall2.Id, hall2);
+            halls.Add(hall3.Id, hall3);
 
             var session1 = new SessionDBModel(hall1.Id, "Avatar: The Way of Water", FilmGenre.SciFi, 2022,
                 new DateTime(2024, 2, 15, 10, 0, 0), 192);
@@ -51,18 +66,18 @@ namespace CinemaManager.Storage
             var session12 = new SessionDBModel(hall2.Id, "Fight Club", FilmGenre.Thriller, 1999,
                 new DateTime(2024, 2, 16, 21, 0, 0), 139);
 
-            sessions[session1.Id] = session1;
-            sessions[session2.Id] = session2;
-            sessions[session3.Id] = session3;
-            sessions[session4.Id] = session4;
-            sessions[session5.Id] = session5;
-            sessions[session6.Id] = session6;
-            sessions[session7.Id] = session7;
-            sessions[session8.Id] = session8;
-            sessions[session9.Id] = session9;
-            sessions[session10.Id] = session10;
-            sessions[session11.Id] = session11;
-            sessions[session12.Id] = session12;
+            sessions.Add(session1.Id, session1);
+            sessions.Add(session2.Id, session2);
+            sessions.Add(session3.Id, session3);
+            sessions.Add(session4.Id, session4);
+            sessions.Add(session5.Id, session5);
+            sessions.Add(session6.Id, session6);
+            sessions.Add(session7.Id, session7);
+            sessions.Add(session8.Id, session8);
+            sessions.Add(session9.Id, session9);
+            sessions.Add(session10.Id, session10);
+            sessions.Add(session11.Id, session11);
+            sessions.Add(session12.Id, session12);
         }
     }
 }
