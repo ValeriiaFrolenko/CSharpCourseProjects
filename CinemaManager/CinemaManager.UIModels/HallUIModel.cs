@@ -11,9 +11,9 @@ namespace CinemaManager.UIModels
         private CinemaHallType _cinemaHallType;
         private List<SessionUIModel> _sessions;
 
-        public HallUIModel(string name, int numberOfSeats, CinemaHallType cinemaHallType, List<SessionUIModel> sessionUIModels)
+        public HallUIModel(Guid id, string name, int numberOfSeats, CinemaHallType cinemaHallType, List<SessionUIModel> sessionUIModels)
         {
-            _id = Guid.NewGuid();
+            _id = id;
             _name = name;
             _numberOfSeats = numberOfSeats;
             _cinemaHallType = cinemaHallType;
@@ -54,6 +54,8 @@ namespace CinemaManager.UIModels
 
         public IReadOnlyList<SessionUIModel> Sessions => _sessions.AsReadOnly();
 
+        public int TotalDurationOfSessions => _sessions.Sum(s => s.DurationInMinutes);
+
         public void AddSession(SessionUIModel session)
         {
             _sessions.Add(session);
@@ -63,8 +65,6 @@ namespace CinemaManager.UIModels
         {
             _sessions.AddRange(sessions);
         }
-
-        public int TotalDurationOfSessions => _sessions.Sum(s => s.DurationInMinutes);
 
         public override string ToString()
         {

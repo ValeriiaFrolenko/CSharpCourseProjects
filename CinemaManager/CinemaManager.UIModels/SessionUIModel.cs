@@ -13,15 +13,15 @@ namespace CinemaManager.UIModels
         private DateTime _startTime;
         private int _durationInMinutes;
 
-        public SessionUIModel(Guid cinemaHallId, string movieName, FilmGenre filmGenre, int yearOfRelease, DateTime startTime, int durationInMinutes)
+        public SessionUIModel(Guid id, Guid cinemaHallId, string movieName, FilmGenre filmGenre, int yearOfRelease, DateTime startTime, int durationInMinutes)
         {
-            _id = Guid.NewGuid();
+            _id = id;
             _cinemaHallId = cinemaHallId;
             _movieName = movieName;
             _filmGenre = filmGenre;
             _yearOfRelease = yearOfRelease;
             _startTime = startTime;
-            DurationInMinutes = durationInMinutes;
+            _durationInMinutes = durationInMinutes;
         }
 
         public SessionUIModel(SessionDBModel sessionDBModel)
@@ -32,7 +32,7 @@ namespace CinemaManager.UIModels
             _filmGenre = sessionDBModel.FilmGenre;
             _yearOfRelease = sessionDBModel.YearOfRelease;
             _startTime = sessionDBModel.StartTime;
-            DurationInMinutes = sessionDBModel.DurationInMinutes;
+            _durationInMinutes = sessionDBModel.DurationInMinutes;
         }
 
         public Guid Id
@@ -43,7 +43,6 @@ namespace CinemaManager.UIModels
         public Guid CinemaHallId
         {
             get => _cinemaHallId;
-            set => _cinemaHallId = value;
         }
 
         public string MovieName
