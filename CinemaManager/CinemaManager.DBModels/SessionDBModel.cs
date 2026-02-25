@@ -4,14 +4,6 @@ namespace CinemaManager.DBModels
 {
     public class SessionDBModel
     {
-        public Guid Id { get; }
-        public Guid CinemaHallId { get; }
-        public string MovieName { get; set; }
-        public FilmGenre FilmGenre { get; set; }
-        public int YearOfRelease { get; set; }
-        public DateTime StartTime { get; set; }
-        public int DurationInMinutes { get; set; }
-
         public SessionDBModel(Guid cinemaHallId, string movieName, FilmGenre filmGenre, int yearOfRelease, DateTime startTime, int durationInMinutes)
         {
             Id = Guid.NewGuid();
@@ -22,5 +14,13 @@ namespace CinemaManager.DBModels
             StartTime = startTime;
             DurationInMinutes = durationInMinutes;
         }
+
+        public Guid Id { get; }
+        public Guid CinemaHallId { get; }
+        public string MovieName { get; set; }
+        public FilmGenre FilmGenre { get; set; }
+        public int YearOfRelease { get; set; }
+        public DateTime StartTime { get; set; }
+        public int DurationInMinutes { get; set; }
     }
 }
