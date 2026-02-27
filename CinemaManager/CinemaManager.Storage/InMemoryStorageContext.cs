@@ -3,42 +3,37 @@ using CinemaManager.DBModels;
 
 namespace CinemaManager.Storage
 {
-    internal static class Storage
+    public class InMemoryStorageContext : IStorageContext
     {
-        private static Dictionary<Guid, HallDBModel> halls = new();
-        private static Dictionary<Guid, SessionDBModel> sessions = new();
+        private readonly Dictionary<Guid, HallDBModel> _halls = new();
+        private readonly Dictionary<Guid, SessionDBModel> _sessions = new();
 
-        static Storage()
+        public InMemoryStorageContext()
         {
             InitializeData();
         }
-        public static bool TryGetHall(Guid id, out HallDBModel? hall)
-            => halls.TryGetValue(id, out hall);
 
-        public static bool TryGetSession(Guid id, out SessionDBModel? session)
-            => sessions.TryGetValue(id, out session);
+        public bool TryGetHall(Guid id, out HallDBModel? hall)
+            => _halls.TryGetValue(id, out hall);
 
-        public static IReadOnlyDictionary<Guid, HallDBModel> GetHalls()
-            => halls;
+        public bool TryGetSession(Guid id, out SessionDBModel? session)
+            => _sessions.TryGetValue(id, out session);
 
-        public static IReadOnlyDictionary<Guid, SessionDBModel> GetSessions()
-            => sessions;
+        public IReadOnlyDictionary<Guid, HallDBModel> GetHalls() => _halls;
+        public IReadOnlyDictionary<Guid, SessionDBModel> GetSessions() => _sessions;
 
-        public static void AddHall(HallDBModel hall)
-            => halls.Add(hall.Id, hall);
+        public void AddHall(HallDBModel hall) => _halls.Add(hall.Id, hall);
+        public void AddSession(SessionDBModel session) => _sessions.Add(session.Id, session);
 
-        public static void AddSession(SessionDBModel session)
-            => sessions.Add(session.Id, session);
-
-        private static void InitializeData()
+        private void InitializeData()
         {
             var hall1 = new HallDBModel("Hall 1", 250, CinemaHallType.IMAX);
             var hall2 = new HallDBModel("Hall 2", 50, CinemaHallType.VIP);
             var hall3 = new HallDBModel("Hall 3", 150, CinemaHallType.Standard2D);
 
-            halls.Add(hall1.Id, hall1);
-            halls.Add(hall2.Id, hall2);
-            halls.Add(hall3.Id, hall3);
+            _halls.Add(hall1.Id, hall1);
+            _halls.Add(hall2.Id, hall2);
+            _halls.Add(hall3.Id, hall3);
 
             var session1 = new SessionDBModel(hall1.Id, "Avatar: The Way of Water", FilmGenre.SciFi, 2022,
                 new DateTime(2024, 2, 15, 10, 0, 0), 192);
@@ -60,24 +55,23 @@ namespace CinemaManager.Storage
                 new DateTime(2024, 2, 17, 10, 0, 0), 195);
             var session10 = new SessionDBModel(hall1.Id, "Forrest Gump", FilmGenre.Drama, 1994,
                 new DateTime(2024, 2, 17, 14, 0, 0), 142);
-
             var session11 = new SessionDBModel(hall2.Id, "Pulp Fiction", FilmGenre.Thriller, 1994,
                 new DateTime(2024, 2, 15, 19, 0, 0), 154);
             var session12 = new SessionDBModel(hall2.Id, "Fight Club", FilmGenre.Thriller, 1999,
                 new DateTime(2024, 2, 16, 21, 0, 0), 139);
 
-            sessions.Add(session1.Id, session1);
-            sessions.Add(session2.Id, session2);
-            sessions.Add(session3.Id, session3);
-            sessions.Add(session4.Id, session4);
-            sessions.Add(session5.Id, session5);
-            sessions.Add(session6.Id, session6);
-            sessions.Add(session7.Id, session7);
-            sessions.Add(session8.Id, session8);
-            sessions.Add(session9.Id, session9);
-            sessions.Add(session10.Id, session10);
-            sessions.Add(session11.Id, session11);
-            sessions.Add(session12.Id, session12);
+            _sessions.Add(session1.Id, session1);
+            _sessions.Add(session2.Id, session2);
+            _sessions.Add(session3.Id, session3);
+            _sessions.Add(session4.Id, session4);
+            _sessions.Add(session5.Id, session5);
+            _sessions.Add(session6.Id, session6);
+            _sessions.Add(session7.Id, session7);
+            _sessions.Add(session8.Id, session8);
+            _sessions.Add(session9.Id, session9);
+            _sessions.Add(session10.Id, session10);
+            _sessions.Add(session11.Id, session11);
+            _sessions.Add(session12.Id, session12);
         }
     }
 }

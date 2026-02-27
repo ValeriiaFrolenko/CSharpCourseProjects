@@ -1,14 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CinemaManager.Composition\CinemaManager.Composition.csproj" />
+    <ProjectReference Include="..\CinemaManager.DBModels\CinemaManager.DBModels.csproj" />
+    <ProjectReference Include="..\CinemaManager.Storage\CinemaManager.Storage.csproj" />
     <ProjectReference Include="..\CinemaManager.UIModels\CinemaManager.UIModels.csproj" />
   </ItemGroup>
 
