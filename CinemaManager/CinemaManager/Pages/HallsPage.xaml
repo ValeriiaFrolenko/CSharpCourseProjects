@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:CinemaManager.Pages"
              xmlns:dto="clr-namespace:CinemaManager.DTOs;assembly=CinemaManager.DTOs"
              x:Class="CinemaManager.Pages.HallsPage"
+             x:DataType="local:HallsPage"
              Title="Halls Page">
 
     <Grid Padding="15">
-        <CollectionView x:Name="HallsCollectionView">
+        <CollectionView ItemsSource="{Binding Halls}">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="dto:HallListItemDTO">
                     <Button 
