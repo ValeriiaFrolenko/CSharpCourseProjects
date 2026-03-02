@@ -9,7 +9,7 @@ public partial class SessionDetailsPage : ContentPage
     private readonly ISessionStorageService _sessionStorageService;
     private Guid _sessionId;
 
-    public SessionUIModel Session { get; set; }
+    public SessionUIModel? Session { get; set; }
 
     public string SessionId
     {
