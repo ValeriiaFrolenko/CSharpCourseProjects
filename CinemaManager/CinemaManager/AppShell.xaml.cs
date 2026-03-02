@@ -1,10 +1,13 @@
-﻿namespace CinemaManager
+﻿using CinemaManager.Pages;
+
+namespace CinemaManager;
+
+public partial class AppShell : Shell
 {
-    public partial class AppShell : Shell
+    public AppShell()
     {
-        public AppShell()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
+        Routing.RegisterRoute(nameof(HallDetailsPage), typeof(HallDetailsPage));
+        Routing.RegisterRoute(nameof(SessionDetailsPage), typeof(SessionDetailsPage));
     }
 }

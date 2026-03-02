@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CinemaManager.DBModels\CinemaManager.DBModels.csproj" />
+    <ProjectReference Include="..\CinemaManager.DTOs\CinemaManager.DTOs.csproj" />
     <ProjectReference Include="..\CinemaManager.Storage\CinemaManager.Storage.csproj" />
     <ProjectReference Include="..\CinemaManager.UIModels\CinemaManager.UIModels.csproj" />
   </ItemGroup>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:CinemaManager.UIModels;assembly=CinemaManager.UIModels"
+             x:Class="CinemaManager.Pages.HallDetailsPage"
+             Title="Hall Details">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="20">
+
+            <Label Text="{Binding Hall.Name, FallbackValue='Loading...'}" Style="{StaticResource Headline}" />
+
+            <VerticalStackLayout Spacing="10">
+                <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
+                    <Label Text="Hall Type:"  FontAttributes="Bold" />
+                    <Label Text="{Binding Hall.CinemaHallType, FallbackValue='N/A'}" />
+                </HorizontalStackLayout>
+
+                <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
+                    <Label Text="Number of Seats:" />
+                    <Label Text="{Binding Hall.NumberOfSeats, FallbackValue='N/A'}" />
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
+
+            <BoxView HeightRequest="1" Margin="0,10" />
+
+            <Label Text="Sessions Schedule:" />
+
+            <CollectionView 
+                ItemsSource="{Binding Hall.Sessions}"
+                SelectionMode="Single"
+                SelectionChanged="OnSessionSelected">
+                <CollectionView.EmptyView>
+                    <Label Text="No sessions scheduled" />
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:SessionUIModel">
+                        <Border 
+                            Padding="15"
+                            Margin="0,5">
+                            <VerticalStackLayout Spacing="5">
+                                <Label 
+                                    Text="{Binding MovieName, FallbackValue='Unknown Movie'}" 
+                                    HorizontalOptions="Center" />
+                                <Label 
+                                    Text="{Binding StartTime, StringFormat='{0:dd.MM.yyyy HH:mm}', FallbackValue='TBA'}" 
+                                    HorizontalOptions="Center" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

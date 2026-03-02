@@ -62,7 +62,21 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\CinemaManager.Composition\CinemaManager.Composition.csproj" />
+	  <ProjectReference Include="..\CinemaManager.DTOs\CinemaManager.DTOs.csproj" />
+	  <ProjectReference Include="..\CinemaManager.Services\CinemaManager.Services.csproj" />
+	  <ProjectReference Include="..\CinemaManager.Storage\CinemaManager.Storage.csproj" />
+	  <ProjectReference Include="..\CinemaManager.UIModels\CinemaManager.UIModels.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiXaml Update="Pages\HallDetailsPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Pages\HallsPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\SessionDetailsPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>
