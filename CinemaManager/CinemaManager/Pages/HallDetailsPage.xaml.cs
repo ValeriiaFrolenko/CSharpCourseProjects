@@ -9,7 +9,7 @@ public partial class HallDetailsPage : ContentPage
     private readonly IHallStorageService _hallStorageService;
     private Guid _hallId;
 
-    public HallUIModel Hall { get; set; }
+    public HallUIModel? Hall { get; set; }
 
     public string HallId
     {

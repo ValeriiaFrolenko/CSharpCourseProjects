@@ -11,11 +11,9 @@ public partial class HallsPage : ContentPage
     public HallsPage(IHallStorageService hallStorageService)
     {
         InitializeComponent();
-
         var summary = hallStorageService.GetHallsSummary();
         Halls = new ObservableCollection<HallListItemDTO>(summary);
-
-        HallsCollectionView.ItemsSource = Halls;
+        BindingContext = this;
     }
 
     private async void OnHallButtonClicked(object sender, EventArgs e)
