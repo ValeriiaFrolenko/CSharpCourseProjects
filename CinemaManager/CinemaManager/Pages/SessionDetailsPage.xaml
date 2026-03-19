@@ -8,7 +8,7 @@
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="20">
 
-            <Label Text="{Binding Session.MovieName, FallbackValue='Loading...'}" 
+            <Label Text="{Binding Session.MovieName, FallbackValue='Loading...'}"
                    Style="{StaticResource Headline}" />
 
             <Border Padding="20">
@@ -31,7 +31,9 @@
 
                     <HorizontalStackLayout Spacing="10">
                         <Label Text="Genre:" FontAttributes="Bold" />
-                        <Label Text="{Binding Session.FilmGenre, FallbackValue='N/A'}" />
+                        <Label Text="{Binding Session.FilmGenre,
+                                              Converter={StaticResource EnumDisplayConverter},
+                                              FallbackValue='N/A'}" />
                     </HorizontalStackLayout>
 
                     <HorizontalStackLayout Spacing="10">

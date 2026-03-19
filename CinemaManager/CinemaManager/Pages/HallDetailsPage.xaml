@@ -14,8 +14,10 @@
 
             <VerticalStackLayout Spacing="10">
                 <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
-                    <Label Text="Hall Type:"  FontAttributes="Bold" />
-                    <Label Text="{Binding Hall.CinemaHallType, FallbackValue='N/A'}" />
+                    <Label Text="Hall Type:" FontAttributes="Bold" />
+                    <Label Text="{Binding Hall.CinemaHallType,
+                                          Converter={StaticResource EnumDisplayConverter},
+                                          FallbackValue='N/A'}" />
                 </HorizontalStackLayout>
 
                 <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
@@ -28,7 +30,7 @@
 
             <Label Text="Sessions Schedule:" />
 
-            <CollectionView 
+            <CollectionView
                 ItemsSource="{Binding Hall.Sessions}"
                 SelectionMode="Single"
                 SelectionChanged="OnSessionSelected">
@@ -37,15 +39,13 @@
                 </CollectionView.EmptyView>
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="models:SessionUIModel">
-                        <Border 
-                            Padding="15"
-                            Margin="0,5">
+                        <Border Padding="15" Margin="0,5">
                             <VerticalStackLayout Spacing="5">
-                                <Label 
-                                    Text="{Binding MovieName, FallbackValue='Unknown Movie'}" 
+                                <Label
+                                    Text="{Binding MovieName, FallbackValue='Unknown Movie'}"
                                     HorizontalOptions="Center" />
-                                <Label 
-                                    Text="{Binding StartTime, StringFormat='{0:dd.MM.yyyy HH:mm}', FallbackValue='TBA'}" 
+                                <Label
+                                    Text="{Binding StartTime, StringFormat='{0:dd.MM.yyyy HH:mm}', FallbackValue='TBA'}"
                                     HorizontalOptions="Center" />
                             </VerticalStackLayout>
                         </Border>
