@@ -1,34 +1,29 @@
 # Cinema Manager
 
-Console application for managing cinema halls and movie sessions.
+A cross-platform .NET MAUI application for managing cinema halls and movie sessions. 
 
 ## Project Structure
 
-- **CinemaManager_Common** - Enumerations (CinemaHallType, FilmGenre)
-- **CinemaManager_DBModels** - Data storage models (without computed fields or collections)
-- **CinemaManager_UIModels** - UI/Display models (with computed fields and session collections)
-- **CinemaManager_Storage** - Storage services and in-memory data storage
-- **CinemaManagerConsole** - Console application
+- **CinemaManager** - The main .NET MAUI application (UI, Pages, Navigation).
+- **CinemaManager.Composition** - Dependency Injection (IoC) configuration (`CompositionRoot`).
+- **CinemaManager.Services** - Business logic and data mapping services (`HallStorageService`, `SessionStorageService`).
+- **CinemaManager.Storage** - In-memory data storage context and data initialization.
+- **CinemaManager.DBModels** - Data storage models (raw data only, no computed fields or complex object references).
+- **CinemaManager.UIModels** - UI/Display models (includes computed fields like `TotalDurationOfSessions`, `EndTime`, and related session collections).
+- **CinemaManager.DTOs** - Data Transfer Objects used for lightweight data passing (e.g., list items).
+- **CinemaManager.Common** - Shared enumerations (`CinemaHallType`, `FilmGenre`).
+- **CinemaManagerConsole** - Legacy console application for basic testing.
 
-## Architecture Notes
-
-### Separation of Concerns
-- **DBModels**: Store raw data only, no computed fields, no cross-references between entities
-- **UIModels**: Include computed fields (e.g., `TotalDurationOfSessions`, `EndTime`) and entity relationships
-- **Storage**: Internal static class with public fields, accessible only through service classes
-
-### Storage Services
-- `HallStorageService`: Manages cinema hall data retrieval and conversion from DB to UI models
-- `SessionStorageService`: Manages movie session data retrieval
 
 ## How to Run
 
-1. Open the solution in Visual Studio
-2. Set `CinemaManagerConsole` as the startup project
-3. Run the application (F5)
+1. Open the solution in **Visual Studio 2022** (ensure the .NET MAUI workload is installed).
+2. Set **`CinemaManager`** as the startup project.
+3. Select your target platform from the debug dropdown (e.g., **Windows Machine** or **Android Emulator**).
+4. Run the application (F5).
 
 ## Initial Data
 
-The storage is pre-populated with:
-- 3 cinema halls (IMAX, VIP, Standard2D)
-- 12 movie sessions with realistic data
+The storage is pre-populated with realistic initial data:
+- **3 cinema halls** (IMAX, VIP, Standard2D)
+- **12 movie sessions** with varying genres, dates, and durations.
