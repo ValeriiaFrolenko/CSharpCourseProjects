@@ -2,7 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:CinemaManager.Pages"
-             xmlns:dto="clr-namespace:CinemaManager.DTOs;assembly=CinemaManager.DTOs"
+             xmlns:dto="clr-namespace:CinemaManager.DTOs.Halls;assembly=CinemaManager.DTOs"
              x:Class="CinemaManager.Pages.HallsPage"
              x:DataType="local:HallsPage"
              Title="Halls Page">
@@ -10,12 +10,16 @@
     <Grid Padding="15">
         <CollectionView ItemsSource="{Binding Halls}">
             <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="dto:HallListItemDTO">
-                    <Button 
-                        Text="{Binding Name}"
-                        Margin="0, 5"
-                        CommandParameter="{Binding Id}"
-                        Clicked="OnHallButtonClicked" />
+                <DataTemplate x:DataType="dto:HallListDTO">
+                    <Border Margin="0,5" Padding="10">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer CommandParameter="{Binding Id}" Tapped="OnHallTapped"/>
+                        </Border.GestureRecognizers>
+                        <VerticalStackLayout>
+                            <Label Text="{Binding Name}" FontSize="16" FontAttributes="Bold" HorizontalOptions="Center"/>
+                            <Label Text="{Binding NumberOfSessions, StringFormat='Sessions: {0}'}" HorizontalOptions="Center"/>
+                        </VerticalStackLayout>
+                    </Border>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>

@@ -1,60 +1,44 @@
-﻿using CinemaManager.DBModels;
-using CinemaManager.DTOs;
-using CinemaManager.UIModels;
+﻿using CinemaManager.DTOs.Halls;
+using CinemaManager.Repositories;
 
 namespace CinemaManager.Storage
 {
     public class HallStorageService : IHallStorageService
     {
-        private readonly IStorageContext _storage;
+        private readonly IHallRepository _hallRepository;
+        private readonly ISessionRepository _sessionRepository;
 
-        public HallStorageService(IStorageContext storage)
+        public HallStorageService(IHallRepository hallRepository, ISessionRepository sessionRepository)
         {
-            _storage = storage;
+            _hallRepository = hallRepository;
+            _sessionRepository = sessionRepository;
         }
 
         public int GetHallsCount()
         {
-            return _storage.GetHalls().Count;
+            return _hallRepository.GetHallsCount();
         }
 
-        public HallUIModel? GetHallById(Guid id)
+        public HallDetailsDTO? GetHallById(Guid id)
         {
-            if (!_storage.TryGetHall(id, out var hallDB))
+            var hallDB = _hallRepository.GetHallById(id);
+            if (hallDB == null)
                 return null;
-            var sessionsByHall = GroupSessionsByHall();
-            return CreateHallUIModel(hallDB!, sessionsByHall);
+            return new HallDetailsDTO(
+                hallDB.Id, 
+                hallDB.Name, 
+                hallDB.NumberOfSeats, 
+                hallDB.CinemaHallType);
         }
 
-        public List<HallUIModel> GetAllHalls()
+        public IEnumerable<HallListDTO> GetAllHalls()
         {
-            var sessionsByHall = GroupSessionsByHall();
-            return _storage.GetHalls().Values
-                .Select(hallDB => CreateHallUIModel(hallDB, sessionsByHall))
-                .ToList();
-        }
-
-        public List<HallListItemDTO> GetHallsSummary()
-        {
-            return _storage.GetHalls().Values
-                .Select(h => new HallListItemDTO(h.Id, h.Name))
-                .ToList();
-        }
-
-        private Dictionary<Guid, List<SessionUIModel>> GroupSessionsByHall()
-        {
-            return _storage.GetSessions().Values
-                .GroupBy(s => s.CinemaHallId)
-                .ToDictionary(
-                    g => g.Key,
-                    g => g.Select(s => new SessionUIModel(s)).ToList()
-                );
-        }
-
-        private HallUIModel CreateHallUIModel(HallDBModel hallDB, Dictionary<Guid, List<SessionUIModel>> sessionsByHall)
-        {
-            var sessions = sessionsByHall.GetValueOrDefault(hallDB.Id, new List<SessionUIModel>());
-            return new HallUIModel(hallDB, sessions);
+            return _hallRepository.GetAllHalls()
+                .Select(h => new HallListDTO(
+                    h.Id, 
+                    h.Name, 
+                    _sessionRepository.GetSessionsCountByHallId(h.Id)
+                    ));
         }
     }
 }

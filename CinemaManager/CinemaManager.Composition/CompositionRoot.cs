@@ -1,4 +1,5 @@
-﻿using CinemaManager.Storage;
+﻿using CinemaManager.Repositories;
+using CinemaManager.Storage;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CinemaManager.Composition
@@ -8,6 +9,8 @@ namespace CinemaManager.Composition
         public static void Register(IServiceCollection services)
         {
             services.AddSingleton<IStorageContext, InMemoryStorageContext>();
+            services.AddSingleton<IHallRepository, HallRepository>();
+            services.AddSingleton<ISessionRepository, SessionRepository>();
             services.AddSingleton<IHallStorageService, HallStorageService>();
             services.AddSingleton<ISessionStorageService, SessionStorageService>();
         }

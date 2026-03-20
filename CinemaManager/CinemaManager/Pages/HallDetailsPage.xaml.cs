@@ -1,5 +1,6 @@
+using CinemaManager.DTOs.Halls;
+using CinemaManager.DTOs.Sessions;
 using CinemaManager.Storage;
-using CinemaManager.UIModels;
 
 namespace CinemaManager.Pages;
 
@@ -7,41 +8,41 @@ namespace CinemaManager.Pages;
 public partial class HallDetailsPage : ContentPage
 {
     private readonly IHallStorageService _hallStorageService;
+    private readonly ISessionStorageService _sessionStorageService;
     private Guid _hallId;
 
-    public HallUIModel? Hall { get; set; }
+    public HallDetailsDTO? Hall { get; set; }
+    public IEnumerable<SessionListDTO> Sessions { get; set; } = Enumerable.Empty<SessionListDTO>();
 
     public string HallId
     {
         set
         {
             if (Guid.TryParse(value, out _hallId))
-            {
                 LoadHallDetails();
-            }
         }
     }
 
-    public HallDetailsPage(IHallStorageService hallStorageService)
+    public HallDetailsPage(IHallStorageService hallStorageService, ISessionStorageService sessionStorageService)
     {
         InitializeComponent();
         _hallStorageService = hallStorageService;
+        _sessionStorageService = sessionStorageService;
         BindingContext = this;
     }
 
     private void LoadHallDetails()
     {
         Hall = _hallStorageService.GetHallById(_hallId);
+        Sessions = _sessionStorageService.GetSessionsByHallId(_hallId);
         OnPropertyChanged(nameof(Hall));
+        OnPropertyChanged(nameof(Sessions));
     }
 
-    private async void OnSessionSelected(object sender, SelectionChangedEventArgs e)
+    private async void OnSessionTapped(object sender, TappedEventArgs e)
     {
-        if (e.CurrentSelection.FirstOrDefault() is SessionUIModel session)
-        {
-            await Shell.Current.GoToAsync($"{nameof(SessionDetailsPage)}?id={session.Id}");
-
-            ((CollectionView)sender).SelectedItem = null;
-        }
+        if (e.Parameter is not Guid sessionId)
+            return;
+        await Shell.Current.GoToAsync($"{nameof(SessionDetailsPage)}?id={sessionId}");
     }
 }

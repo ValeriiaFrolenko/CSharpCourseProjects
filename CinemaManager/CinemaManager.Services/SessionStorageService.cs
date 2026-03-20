@@ -1,49 +1,41 @@
-﻿using CinemaManager.DTOs;
-using CinemaManager.UIModels;
+﻿using CinemaManager.DTOs.Sessions;
+using CinemaManager.Repositories;
 
 namespace CinemaManager.Storage
 {
     public class SessionStorageService : ISessionStorageService
     {
-        private readonly IStorageContext _storage;
-
-        public SessionStorageService(IStorageContext storage)
+        private readonly ISessionRepository _sessionRepository;
+        public SessionStorageService(ISessionRepository sessionRepository)
         {
-            _storage = storage;
+            _sessionRepository = sessionRepository;
         }
 
-        public int GetSessionsCount()
+        public int GetSessionsCountByHallId(Guid hallId)
         {
-            return _storage.GetSessions().Count;
+            return _sessionRepository.GetSessionsCountByHallId(hallId);
         }
 
-        public SessionUIModel? GetSessionById(Guid id)
+        public SessionDetailsDTO? GetSessionById(Guid id)
         {
-            if (!_storage.TryGetSession(id, out var sessionDB))
+            var sessionDB = _sessionRepository.GetSessionById(id);
+            if (sessionDB == null)
                 return null;
-            return new SessionUIModel(sessionDB!);
+            return new SessionDetailsDTO(
+                sessionDB.Id,
+                sessionDB.MovieName,
+                sessionDB.FilmGenre,
+                sessionDB.YearOfRelease,
+                sessionDB.StartTime,
+                sessionDB.DurationInMinutes
+                );
         }
 
-        public List<SessionUIModel> GetSessions()
+        public IEnumerable<SessionListDTO> GetSessionsByHallId(Guid hallId)
         {
-            return _storage.GetSessions().Values
-                .Select(sessionDB => new SessionUIModel(sessionDB))
-                .ToList();
+            return _sessionRepository.GetSessionsByHallId(hallId)
+                .Select(s => new SessionListDTO(s.Id, s.MovieName, s.StartTime));
         }
 
-        public List<SessionUIModel> GetSessionsByHallId(Guid hallId)
-        {
-            return _storage.GetSessions().Values
-                .Where(s => s.CinemaHallId == hallId)
-                .Select(sessionDB => new SessionUIModel(sessionDB))
-                .ToList();
-        }
-
-        public List<SessionListItemDTO> GetSessionsSummary()
-        {
-            return _storage.GetSessions().Values
-                .Select(s => new SessionListItemDTO(s.Id, s.MovieName, s.StartTime))
-                .ToList();
-        }
     }
 }

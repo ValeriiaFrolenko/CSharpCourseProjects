@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CinemaManager.Common\CinemaManager.Common.csproj" />
+    <ProjectReference Include="..\CinemaManager.Storage\CinemaManager.Storage.csproj" />
   </ItemGroup>
 
 </Project>

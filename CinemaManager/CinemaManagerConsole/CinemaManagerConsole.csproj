@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CinemaManager.Composition\CinemaManager.Composition.csproj" />
-    <ProjectReference Include="..\CinemaManager.UIModels\CinemaManager.UIModels.csproj" />
   </ItemGroup>
 
 </Project>

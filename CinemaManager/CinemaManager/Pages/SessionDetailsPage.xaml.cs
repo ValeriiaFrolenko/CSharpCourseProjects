@@ -1,5 +1,5 @@
+using CinemaManager.DTOs.Sessions;
 using CinemaManager.Storage;
-using CinemaManager.UIModels;
 
 namespace CinemaManager.Pages;
 
@@ -9,7 +9,7 @@ public partial class SessionDetailsPage : ContentPage
     private readonly ISessionStorageService _sessionStorageService;
     private Guid _sessionId;
 
-    public SessionUIModel? Session { get; set; }
+    public SessionDetailsDTO? Session { get; set; }
 
     public string SessionId
     {

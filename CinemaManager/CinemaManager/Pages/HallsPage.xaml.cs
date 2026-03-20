@@ -1,4 +1,4 @@
-using CinemaManager.DTOs;
+using CinemaManager.DTOs.Halls;
 using CinemaManager.Storage;
 using System.Collections.ObjectModel;
 
@@ -6,19 +6,18 @@ namespace CinemaManager.Pages;
 
 public partial class HallsPage : ContentPage
 {
-    public ObservableCollection<HallListItemDTO> Halls { get; set; }
+    public ObservableCollection<HallListDTO> Halls { get; set; }
 
     public HallsPage(IHallStorageService hallStorageService)
     {
         InitializeComponent();
-        var summary = hallStorageService.GetHallsSummary();
-        Halls = new ObservableCollection<HallListItemDTO>(summary);
+        var halls = hallStorageService.GetAllHalls();
+        Halls = new ObservableCollection<HallListDTO>(halls);
         BindingContext = this;
     }
-
-    private async void OnHallButtonClicked(object sender, EventArgs e)
+    private async void OnHallTapped(object sender, TappedEventArgs e)
     {
-        if (sender is Button button && button.CommandParameter is Guid hallId)
+        if (e.Parameter is Guid hallId)
         {
             await Shell.Current.GoToAsync($"{nameof(HallDetailsPage)}?id={hallId}");
         }

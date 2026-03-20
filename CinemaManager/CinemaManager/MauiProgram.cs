@@ -21,6 +21,7 @@ namespace CinemaManager
 
             builder.Services.AddTransient<HallsPage>();
             builder.Services.AddTransient<HallDetailsPage>();
+            builder.Services.AddTransient<SessionDetailsPage>();
 
 #if DEBUG
             builder.Logging.AddDebug();
