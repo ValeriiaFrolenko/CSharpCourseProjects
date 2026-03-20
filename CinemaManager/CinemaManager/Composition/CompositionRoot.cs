@@ -1,9 +1,10 @@
 ﻿using CinemaManager.Repositories;
 using CinemaManager.Storage;
 using CinemaManager.Pages;
-using Microsoft.Extensions.DependencyInjection;
+using CinemaManager.ViewModels;
+using CinemaManager.Services;
 
-namespace CinemaManager.Composition
+namespace CinemaManager.Composition 
 {
     public static class CompositionRoot
     {
@@ -21,6 +22,7 @@ namespace CinemaManager.Composition
 
             services.AddTransient<HallsViewModel>();
             services.AddTransient<HallDetailsViewModel>();
+            services.AddTransient<SessionDetailsViewModel>();
         }
     }
 }
