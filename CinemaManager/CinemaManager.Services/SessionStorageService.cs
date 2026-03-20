@@ -1,7 +1,7 @@
 ﻿using CinemaManager.DTOs.Sessions;
 using CinemaManager.Repositories;
 
-namespace CinemaManager.Storage
+namespace CinemaManager.Services
 {
     public class SessionStorageService : ISessionStorageService
     {

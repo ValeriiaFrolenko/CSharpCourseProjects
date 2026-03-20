@@ -1,8 +1,6 @@
-﻿using CinemaManager.DTOs;
-using CinemaManager.DTOs.Sessions;
-using CinemaManager.UIModels;
+﻿using CinemaManager.DTOs.Sessions;
 
-namespace CinemaManager.Storage
+namespace CinemaManager.Services
 {
     public interface ISessionStorageService
     {

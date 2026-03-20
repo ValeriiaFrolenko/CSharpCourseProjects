@@ -1,7 +1,6 @@
-﻿using CinemaManager.DTOs;
-using CinemaManager.DTOs.Halls;
+﻿using CinemaManager.DTOs.Halls;
 
-namespace CinemaManager.Storage
+namespace CinemaManager.Services
 {
     public interface IHallStorageService
     {

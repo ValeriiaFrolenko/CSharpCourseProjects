@@ -1,7 +1,7 @@
 ﻿using CinemaManager.DTOs.Halls;
 using CinemaManager.Repositories;
 
-namespace CinemaManager.Storage
+namespace CinemaManager.Services
 {
     public class HallStorageService : IHallStorageService
     {
