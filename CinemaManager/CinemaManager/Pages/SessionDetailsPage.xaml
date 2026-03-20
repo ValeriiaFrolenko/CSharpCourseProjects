@@ -2,8 +2,9 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:CinemaManager.Pages"
+             xmlns:vm="clr-namespace:CinemaManager.ViewModels"
              x:Class="CinemaManager.Pages.SessionDetailsPage"
-             x:DataType="local:SessionDetailsPage"
+             x:DataType="vm:SessionDetailsViewModel" 
              Title="Session Details">
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="20">

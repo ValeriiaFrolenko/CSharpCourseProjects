@@ -57,12 +57,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.1" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.5" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\CinemaManager.Composition\CinemaManager.Composition.csproj" />
 	  <ProjectReference Include="..\CinemaManager.DTOs\CinemaManager.DTOs.csproj" />
 	  <ProjectReference Include="..\CinemaManager.Services\CinemaManager.Services.csproj" />
 	  <ProjectReference Include="..\CinemaManager.Storage\CinemaManager.Storage.csproj" />

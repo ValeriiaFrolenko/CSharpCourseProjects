@@ -3,8 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:dto="clr-namespace:CinemaManager.DTOs.Sessions;assembly=CinemaManager.DTOs"
              xmlns:local="clr-namespace:CinemaManager.Pages"
+             xmlns:vm="clr-namespace:CinemaManager.ViewModels"
              x:Class="CinemaManager.Pages.HallDetailsPage"
-             x:DataType="local:HallDetailsPage"
+             x:DataType="vm:HallDetailsViewModel"
              Title="Hall Details">
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="20">
@@ -31,7 +32,9 @@
                     <DataTemplate x:DataType="dto:SessionListDTO">
                         <Border Padding="15" Margin="0,5">
                             <Border.GestureRecognizers>
-                                <TapGestureRecognizer CommandParameter="{Binding Id}" Tapped="OnSessionTapped"/>
+                                <TapGestureRecognizer 
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:HallDetailsViewModel}}, Path=LoadSessionDetailsCommand}" 
+                                    CommandParameter="{Binding Id}"/>
                             </Border.GestureRecognizers>
                             <VerticalStackLayout Spacing="5">
                                 <Label Text="{Binding MovieName, FallbackValue='Unknown Movie'}" HorizontalOptions="Center"/>
