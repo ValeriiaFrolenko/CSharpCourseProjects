@@ -26,6 +26,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CinemaManager.DTOs", "Cinem
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CinemaManager.Repositories", "CinemaManager.Repositories\CinemaManager.Repositories.csproj", "{60A3F046-FA2B-4A46-92B4-342FFBDF495F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CinemaManager.Entities", "Entities\CinemaManager.Entities.csproj", "{972F49D9-79BE-4624-AE25-E8C64FEA0373}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +63,10 @@ Global
 		{60A3F046-FA2B-4A46-92B4-342FFBDF495F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{60A3F046-FA2B-4A46-92B4-342FFBDF495F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{60A3F046-FA2B-4A46-92B4-342FFBDF495F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{972F49D9-79BE-4624-AE25-E8C64FEA0373}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{972F49D9-79BE-4624-AE25-E8C64FEA0373}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{972F49D9-79BE-4624-AE25-E8C64FEA0373}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{972F49D9-79BE-4624-AE25-E8C64FEA0373}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -12,6 +12,15 @@ namespace CinemaManager.DBModels
             CinemaHallType = cinemaHallType;
         }
 
+        /// <summary>Used to reconstruct models loaded from storage.</summary>
+        public HallDBModel(Guid id, string name, int numberOfSeats, CinemaHallType cinemaHallType)
+        {
+            Id = id;
+            Name = name;
+            NumberOfSeats = numberOfSeats;
+            CinemaHallType = cinemaHallType;
+        }
+
         public Guid Id { get; }
         public string Name { get; set; }
         public int NumberOfSeats { get; set; }

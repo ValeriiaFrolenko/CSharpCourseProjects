@@ -4,9 +4,23 @@ namespace CinemaManager.DBModels
 {
     public class SessionDBModel
     {
-        public SessionDBModel(Guid cinemaHallId, string movieName, FilmGenre filmGenre, int yearOfRelease, DateTime startTime, int durationInMinutes)
+        public SessionDBModel(Guid cinemaHallId, string movieName, FilmGenre filmGenre,
+            int yearOfRelease, DateTime startTime, int durationInMinutes)
         {
             Id = Guid.NewGuid();
+            CinemaHallId = cinemaHallId;
+            MovieName = movieName;
+            FilmGenre = filmGenre;
+            YearOfRelease = yearOfRelease;
+            StartTime = startTime;
+            DurationInMinutes = durationInMinutes;
+        }
+
+        /// <summary>Used to reconstruct models loaded from storage.</summary>
+        public SessionDBModel(Guid id, Guid cinemaHallId, string movieName, FilmGenre filmGenre,
+            int yearOfRelease, DateTime startTime, int durationInMinutes)
+        {
+            Id = id;
             CinemaHallId = cinemaHallId;
             MovieName = movieName;
             FilmGenre = filmGenre;

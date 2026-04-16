@@ -4,11 +4,21 @@ namespace CinemaManager.Storage
 {
     public interface IStorageContext
     {
-        bool TryGetHall(Guid id, out HallDBModel? hall);
-        bool TryGetSession(Guid id, out SessionDBModel? session);
-        IReadOnlyDictionary<Guid, HallDBModel> GetHalls();
-        IReadOnlyDictionary<Guid, SessionDBModel> GetSessions();
-        void AddHall(HallDBModel hall);
-        void AddSession(SessionDBModel session);
+        Task InitializeAsync();
+        Task<HallDBModel?> GetHallByIdAsync(Guid id);
+        Task<IEnumerable<HallDBModel>> GetAllHallsAsync();
+        Task AddHallAsync(HallDBModel hall);
+        Task UpdateHallAsync(HallDBModel hall);
+        Task DeleteHallAsync(Guid id);
+
+
+        Task<SessionDBModel?> GetSessionByIdAsync(Guid id);
+        Task<IEnumerable<SessionDBModel>> GetSessionsByHallIdAsync(Guid hallId);
+        Task<int> GetSessionsCountByHallIdAsync(Guid hallId);
+        Task<int> GetTotalDurationByHallIdAsync(Guid hallId);
+        Task AddSessionAsync(SessionDBModel session);
+        Task UpdateSessionAsync(SessionDBModel session);
+        Task DeleteSessionAsync(Guid id);
+        Task DeleteSessionsByHallIdAsync(Guid hallId);
     }
 }
