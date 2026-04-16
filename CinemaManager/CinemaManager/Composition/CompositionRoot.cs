@@ -4,13 +4,15 @@ using CinemaManager.Pages;
 using CinemaManager.ViewModels;
 using CinemaManager.Services;
 
-namespace CinemaManager.Composition 
+namespace CinemaManager.Composition
 {
     public static class CompositionRoot
     {
         public static void Register(IServiceCollection services)
         {
-            services.AddSingleton<IStorageContext, InMemoryStorageContext>();
+            string dbPath = Path.Combine(FileSystem.AppDataDirectory, "cinema.db");
+
+            services.AddSingleton<IStorageContext>(new SqliteStorageContext(dbPath));
             services.AddSingleton<IHallRepository, HallRepository>();
             services.AddSingleton<ISessionRepository, SessionRepository>();
             services.AddSingleton<IHallStorageService, HallStorageService>();

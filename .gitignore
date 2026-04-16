@@ -7,6 +7,12 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+# SQLite databases
+*.db
+*.db3
+*.sqlite
+*.sqlite3
+
 # User-specific files
 *.rsuser
 *.suo

@@ -1,5 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
-using CinemaManager.Composition;
+﻿using CinemaManager.Composition;
+using Microsoft.Extensions.Logging;
 
 namespace CinemaManager
 {
