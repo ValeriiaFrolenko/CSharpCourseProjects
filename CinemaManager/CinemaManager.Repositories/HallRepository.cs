@@ -3,7 +3,7 @@ using CinemaManager.Storage;
 
 namespace CinemaManager.Repositories
 {
-    public class HallRepository: IHallRepository
+    public class HallRepository : IHallRepository
     {
         private readonly IStorageContext _storage;
 
@@ -12,21 +12,19 @@ namespace CinemaManager.Repositories
             _storage = storage;
         }
 
-        public int GetHallsCount()
-        {
-            return _storage.GetHalls().Count;
-        }
+        public Task<HallDBModel?> GetHallByIdAsync(Guid id) =>
+            _storage.GetHallByIdAsync(id);
 
-        public HallDBModel? GetHallById(Guid id)
-        {
-            if (!_storage.TryGetHall(id, out var hallDB))
-                return null;
-            return hallDB;
-        }
+        public Task<IEnumerable<HallDBModel>> GetAllHallsAsync() =>
+            _storage.GetAllHallsAsync();
 
-        public IEnumerable<HallDBModel> GetAllHalls()
-        {
-            return _storage.GetHalls().Values;
-        }
+        public Task AddHallAsync(HallDBModel hall) =>
+            _storage.AddHallAsync(hall);
+
+        public Task UpdateHallAsync(HallDBModel hall) =>
+            _storage.UpdateHallAsync(hall);
+
+        public Task DeleteHallAsync(Guid id) =>
+            _storage.DeleteHallAsync(id);
     }
 }

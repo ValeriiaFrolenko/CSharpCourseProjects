@@ -12,21 +12,28 @@ namespace CinemaManager.Repositories
             _storage = storage;
         }
 
-        public int GetSessionsCountByHallId(Guid hallId)
-        {
-            return _storage.GetSessions().Values.Count(s => s.CinemaHallId == hallId);
-        }
+        public Task<SessionDBModel?> GetSessionByIdAsync(Guid id) =>
+            _storage.GetSessionByIdAsync(id);
 
-        public SessionDBModel? GetSessionById(Guid id)
-        {
-            if (!_storage.TryGetSession(id, out var sessionDB))
-                return null;
-            return sessionDB;
-        }
+        public Task<IEnumerable<SessionDBModel>> GetSessionsByHallIdAsync(Guid hallId) =>
+            _storage.GetSessionsByHallIdAsync(hallId);
 
-        public IEnumerable<SessionDBModel> GetSessionsByHallId(Guid hallId)
-        {
-            return _storage.GetSessions().Values.Where(s => s.CinemaHallId == hallId);
-        }
+        public Task<int> GetSessionsCountByHallIdAsync(Guid hallId) =>
+            _storage.GetSessionsCountByHallIdAsync(hallId);
+
+        public Task<int> GetTotalDurationByHallIdAsync(Guid hallId) =>
+            _storage.GetTotalDurationByHallIdAsync(hallId);
+
+        public Task AddSessionAsync(SessionDBModel session) =>
+            _storage.AddSessionAsync(session);
+
+        public Task UpdateSessionAsync(SessionDBModel session) =>
+            _storage.UpdateSessionAsync(session);
+
+        public Task DeleteSessionAsync(Guid id) =>
+            _storage.DeleteSessionAsync(id);
+
+        public Task DeleteSessionsByHallIdAsync(Guid hallId) =>
+            _storage.DeleteSessionsByHallIdAsync(hallId);
     }
-    }
+}

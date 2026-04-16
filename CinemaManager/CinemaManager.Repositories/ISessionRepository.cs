@@ -1,16 +1,16 @@
 ﻿using CinemaManager.DBModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CinemaManager.Repositories
 {
     public interface ISessionRepository
     {
-        public int GetSessionsCountByHallId(Guid hallId);
-        public SessionDBModel? GetSessionById(Guid id);
-        public IEnumerable<SessionDBModel> GetSessionsByHallId(Guid hallId);
+        Task<SessionDBModel?> GetSessionByIdAsync(Guid id);
+        Task<IEnumerable<SessionDBModel>> GetSessionsByHallIdAsync(Guid hallId);
+        Task<int> GetSessionsCountByHallIdAsync(Guid hallId);
+        Task<int> GetTotalDurationByHallIdAsync(Guid hallId);
+        Task AddSessionAsync(SessionDBModel session);
+        Task UpdateSessionAsync(SessionDBModel session);
+        Task DeleteSessionAsync(Guid id);
+        Task DeleteSessionsByHallIdAsync(Guid hallId);
     }
 }
