@@ -4,8 +4,10 @@ namespace CinemaManager.Services
 {
     public interface ISessionStorageService
     {
-        int GetSessionsCountByHallId(Guid hallId);
-        SessionDetailsDTO? GetSessionById(Guid id);
-        IEnumerable<SessionListDTO> GetSessionsByHallId(Guid hallId);
+        Task<SessionDetailsDTO?> GetSessionByIdAsync(Guid id);
+        Task<IEnumerable<SessionListDTO>> GetSessionsByHallIdAsync(Guid hallId);
+        Task AddSessionAsync(Guid hallId, SessionInputDTO input);
+        Task UpdateSessionAsync(Guid id, SessionInputDTO input);
+        Task DeleteSessionAsync(Guid id);
     }
 }

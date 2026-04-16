@@ -4,8 +4,10 @@ namespace CinemaManager.Services
 {
     public interface IHallStorageService
     {
-        int GetHallsCount();
-        HallDetailsDTO? GetHallById(Guid id);
-        IEnumerable<HallListDTO> GetAllHalls();
+        Task<HallDetailsDTO?> GetHallByIdAsync(Guid id);
+        Task<IEnumerable<HallListDTO>> GetAllHallsAsync();
+        Task AddHallAsync(HallInputDTO input);
+        Task UpdateHallAsync(Guid id, HallInputDTO input);
+        Task DeleteHallAsync(Guid id);
     }
 }

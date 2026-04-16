@@ -1,4 +1,5 @@
-﻿using CinemaManager.DTOs.Halls;
+﻿using CinemaManager.DBModels;
+using CinemaManager.DTOs.Halls;
 using CinemaManager.Repositories;
 
 namespace CinemaManager.Services
@@ -14,31 +15,56 @@ namespace CinemaManager.Services
             _sessionRepository = sessionRepository;
         }
 
-        public int GetHallsCount()
+        public async Task<HallDetailsDTO?> GetHallByIdAsync(Guid id)
         {
-            return _hallRepository.GetHallsCount();
-        }
-
-        public HallDetailsDTO? GetHallById(Guid id)
-        {
-            var hallDB = _hallRepository.GetHallById(id);
-            if (hallDB == null)
+            var hall = await _hallRepository.GetHallByIdAsync(id);
+            if (hall is null)
                 return null;
-            return new HallDetailsDTO(
-                hallDB.Id, 
-                hallDB.Name, 
-                hallDB.NumberOfSeats, 
-                hallDB.CinemaHallType);
+
+            int totalDuration = await _sessionRepository.GetTotalDurationByHallIdAsync(id);
+
+            return new HallDetailsDTO(hall.Id, hall.Name, hall.NumberOfSeats,
+                hall.CinemaHallType, totalDuration);
         }
 
-        public IEnumerable<HallListDTO> GetAllHalls()
+        public async Task<IEnumerable<HallListDTO>> GetAllHallsAsync()
         {
-            return _hallRepository.GetAllHalls()
-                .Select(h => new HallListDTO(
-                    h.Id, 
-                    h.Name, 
-                    _sessionRepository.GetSessionsCountByHallId(h.Id)
-                    ));
+            var halls = await _hallRepository.GetAllHallsAsync();
+            var result = new List<HallListDTO>();
+
+            foreach (var hall in halls)
+            {
+                int sessionCount = await _sessionRepository.GetSessionsCountByHallIdAsync(hall.Id);
+                int totalDuration = await _sessionRepository.GetTotalDurationByHallIdAsync(hall.Id);
+                result.Add(new HallListDTO(hall.Id, hall.Name, sessionCount, totalDuration));
+            }
+
+            return result;
+        }
+
+        public Task AddHallAsync(HallInputDTO input)
+        {
+            var hall = new HallDBModel(input.Name, input.NumberOfSeats, input.CinemaHallType);
+            return _hallRepository.AddHallAsync(hall);
+        }
+
+        public async Task UpdateHallAsync(Guid id, HallInputDTO input)
+        {
+            var hall = await _hallRepository.GetHallByIdAsync(id);
+            if (hall is null)
+                return;
+
+            hall.Name = input.Name;
+            hall.NumberOfSeats = input.NumberOfSeats;
+            hall.CinemaHallType = input.CinemaHallType;
+
+            await _hallRepository.UpdateHallAsync(hall);
+        }
+
+        public async Task DeleteHallAsync(Guid id)
+        {
+            await _sessionRepository.DeleteSessionsByHallIdAsync(id);
+            await _hallRepository.DeleteHallAsync(id);
         }
     }
 }
