@@ -1,8 +1,8 @@
-﻿using CinemaManager.Common.Enums;
-using CinemaManager.DTOs.Halls;
+﻿using CinemaManager.DTOs.Halls;
 using CinemaManager.DTOs.Sessions;
 using CinemaManager.Pages;
 using CinemaManager.Services;
+using CinemaManager.ViewModels.Forms;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
@@ -14,7 +14,7 @@ namespace CinemaManager.ViewModels
         private readonly IHallStorageService _hallStorageService;
         private readonly ISessionStorageService _sessionStorageService;
         private Guid _hallId;
-        private List<SessionListDTO> _allSessions = new();
+        private List<SessionListDTO> _allSessions = [];
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(IsNotBusy))]
@@ -24,64 +24,42 @@ namespace CinemaManager.ViewModels
         private HallDetailsDTO? _hall;
 
         [ObservableProperty]
-        private ObservableCollection<SessionListDTO> _sessions = new();
+        private ObservableCollection<SessionListDTO> _sessions = [];
 
         [ObservableProperty]
         private string _searchText = string.Empty;
-
-        // Edit mode
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(IsDisplayMode))]
         private bool _isEditMode;
 
         [ObservableProperty]
-        private string _editName = string.Empty;
-
-        [ObservableProperty]
-        private string _editSeatsText = string.Empty;
-
-        [ObservableProperty]
-        private CinemaHallType _editHallType;
-
-        // Add session form 
-
-        [ObservableProperty]
         private bool _isAddingSession;
-
-        [ObservableProperty]
-        private string _newSessionMovieName = string.Empty;
-
-        [ObservableProperty]
-        private FilmGenre _selectedNewSessionGenre = FilmGenre.Action;
-
-        [ObservableProperty]
-        private string _newSessionYearText = string.Empty;
-
-        [ObservableProperty]
-        private DateTime _newSessionDate = DateTime.Today;
-
-        [ObservableProperty]
-        private TimeSpan _newSessionTime = TimeSpan.Zero;
-
-        [ObservableProperty]
-        private string _newSessionDurationText = string.Empty;
-
 
         public bool IsNotBusy => !IsBusy;
         public bool IsDisplayMode => !IsEditMode;
 
-        public IReadOnlyList<CinemaHallType> HallTypes { get; } =
-            Enum.GetValues<CinemaHallType>().ToList();
+        public HallFormViewModel EditForm { get; }
+        public SessionFormViewModel AddSessionForm { get; }
 
-        public IReadOnlyList<FilmGenre> FilmGenres { get; } =
-            Enum.GetValues<FilmGenre>().ToList();
-
-        public HallDetailsViewModel(IHallStorageService hallStorageService,
+        public HallDetailsViewModel(
+            IHallStorageService hallStorageService,
             ISessionStorageService sessionStorageService)
         {
             _hallStorageService = hallStorageService;
             _sessionStorageService = sessionStorageService;
+
+            EditForm = new HallFormViewModel();
+            EditForm.SubmitHandler = SaveHallEditAsync;
+            EditForm.CancelHandler = () => IsEditMode = false;
+
+            AddSessionForm = new SessionFormViewModel();
+            AddSessionForm.SubmitHandler = SaveNewSessionAsync;
+            AddSessionForm.CancelHandler = () =>
+            {
+                IsAddingSession = false;
+                AddSessionForm.Reset();
+            };
         }
 
         public void ApplyQueryAttributes(IDictionary<string, object> query)
@@ -116,57 +94,13 @@ namespace CinemaManager.ViewModels
                 filtered.OrderBy(s => s.StartTime));
         }
 
-        // Hall edit commands
-
         [RelayCommand]
         private void StartEdit()
         {
             if (Hall is null) return;
-            EditName = Hall.Name;
-            EditSeatsText = Hall.NumberOfSeats.ToString();
-            EditHallType = Hall.CinemaHallType;
+            EditForm.Populate(Hall.Name, Hall.NumberOfSeats, Hall.CinemaHallType);
             IsEditMode = true;
         }
-
-        [RelayCommand]
-        private void CancelEdit()
-        {
-            IsEditMode = false;
-        }
-
-        [RelayCommand]
-        private async Task SaveEditAsync()
-        {
-            if (Hall is null) return;
-
-            if (string.IsNullOrWhiteSpace(EditName))
-            {
-                await Shell.Current.DisplayAlert("Validation", "Hall name is required.", "OK");
-                return;
-            }
-
-            if (!int.TryParse(EditSeatsText, out int seats) || seats <= 0)
-            {
-                await Shell.Current.DisplayAlert("Validation",
-                    "Number of seats must be a positive integer.", "OK");
-                return;
-            }
-
-            IsBusy = true;
-            try
-            {
-                var input = new HallInputDTO(EditName.Trim(), seats, EditHallType);
-                await _hallStorageService.UpdateHallAsync(Hall.Id, input);
-                IsEditMode = false;
-                await LoadAsync();
-            }
-            finally
-            {
-                IsBusy = false;
-            }
-        }
-
-        // Session commands
 
         [RelayCommand]
         private async Task LoadSessionDetailsAsync(Guid sessionId)
@@ -174,63 +108,11 @@ namespace CinemaManager.ViewModels
             await Shell.Current.GoToAsync($"{nameof(SessionDetailsPage)}?id={sessionId}");
         }
 
-
         [RelayCommand]
         private void ShowAddSessionForm()
         {
-            NewSessionMovieName = string.Empty;
-            SelectedNewSessionGenre = FilmGenre.Action;
-            NewSessionYearText = DateTime.Today.Year.ToString();
-            NewSessionDate = DateTime.Today;
-            NewSessionTime = TimeSpan.FromHours(12);
-            NewSessionDurationText = string.Empty;
+            AddSessionForm.Reset();
             IsAddingSession = true;
-        }
-
-        [RelayCommand]
-        private void CancelAddSession()
-        {
-            IsAddingSession = false;
-        }
-
-        [RelayCommand]
-        private async Task SaveNewSessionAsync()
-        {
-            if (string.IsNullOrWhiteSpace(NewSessionMovieName))
-            {
-                await Shell.Current.DisplayAlert("Validation", "Movie name is required.", "OK");
-                return;
-            }
-
-            if (!int.TryParse(NewSessionYearText, out int year) || year < 1900 || year > 2100)
-            {
-                await Shell.Current.DisplayAlert("Validation",
-                    "Year of release must be between 1900 and 2100.", "OK");
-                return;
-            }
-
-            if (!int.TryParse(NewSessionDurationText, out int duration) || duration <= 0)
-            {
-                await Shell.Current.DisplayAlert("Validation",
-                    "Duration must be a positive number of minutes.", "OK");
-                return;
-            }
-
-            DateTime startTime = NewSessionDate.Date + NewSessionTime;
-
-            IsBusy = true;
-            try
-            {
-                var input = new SessionInputDTO(NewSessionMovieName.Trim(),
-                    SelectedNewSessionGenre, year, startTime, duration);
-                await _sessionStorageService.AddSessionAsync(_hallId, input);
-                IsAddingSession = false;
-                await LoadAsync();
-            }
-            finally
-            {
-                IsBusy = false;
-            }
         }
 
         [RelayCommand]
@@ -246,6 +128,52 @@ namespace CinemaManager.ViewModels
             {
                 await _sessionStorageService.DeleteSessionAsync(sessionId);
                 await LoadAsync();
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        private async Task SaveHallEditAsync()
+        {
+            IsBusy = true;
+            try
+            {
+                var input = new HallInputDTO(EditForm.Name.Trim(), EditForm.ParsedSeats, EditForm.HallType);
+                await _hallStorageService.UpdateHallAsync(_hallId, input);
+                IsEditMode = false;
+                await LoadAsync();
+            }
+            catch (Exception ex)
+            {
+                await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        private async Task SaveNewSessionAsync()
+        {
+            IsBusy = true;
+            try
+            {
+                var input = new SessionInputDTO(
+                    AddSessionForm.MovieName.Trim(),
+                    AddSessionForm.Genre,
+                    AddSessionForm.ParsedYear,
+                    AddSessionForm.ParsedStartTime,
+                    AddSessionForm.ParsedDuration);
+                await _sessionStorageService.AddSessionAsync(_hallId, input);
+                IsAddingSession = false;
+                AddSessionForm.Reset();
+                await LoadAsync();
+            }
+            catch (Exception ex)
+            {
+                await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
             }
             finally
             {

@@ -3,13 +3,17 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:dto="clr-namespace:CinemaManager.DTOs.Halls;assembly=CinemaManager.DTOs"
              xmlns:vm="clr-namespace:CinemaManager.ViewModels"
+             xmlns:forms="clr-namespace:CinemaManager.ViewModels.Forms"
              x:Class="CinemaManager.Pages.HallsPage"
              x:DataType="vm:HallsViewModel"
              Title="Cinema Halls">
 
     <Grid>
+
         <!-- Main Content -->
-        <Grid RowDefinitions="Auto,Auto,*,Auto" Padding="15" RowSpacing="10"
+        <Grid RowDefinitions="Auto,Auto,*,Auto"
+              Padding="15"
+              RowSpacing="10"
               IsEnabled="{Binding IsNotBusy}">
 
             <!-- Search Bar -->
@@ -19,34 +23,45 @@
 
             <!-- Add Hall Form -->
             <Border Grid.Row="1" Padding="15" IsVisible="{Binding IsAddingHall}">
-                <VerticalStackLayout Spacing="8">
+                <VerticalStackLayout Spacing="8" BindingContext="{Binding AddForm}" x:DataType="forms:HallFormViewModel">
+
                     <Label Text="New Hall" FontAttributes="Bold" FontSize="16" />
-                    <Entry Placeholder="Hall name" Text="{Binding NewHallName}" />
-                    <Entry Placeholder="Number of seats" Text="{Binding NewHallSeatsText}"
-                           Keyboard="Numeric" />
+
+                    <Entry Placeholder="Hall name" Text="{Binding Name}" />
+                    <Label Text="{Binding NameError}"
+                           TextColor="Red" FontSize="12"
+                           IsVisible="{Binding NameError, Converter={StaticResource IsNotNullConverter}}" />
+
+                    <Entry Placeholder="Number of seats" Text="{Binding SeatsText}" Keyboard="Numeric" />
+                    <Label Text="{Binding SeatsError}"
+                           TextColor="Red" FontSize="12"
+                           IsVisible="{Binding SeatsError, Converter={StaticResource IsNotNullConverter}}" />
+
                     <Picker Title="Hall type"
                             ItemsSource="{Binding HallTypes}"
-                            SelectedItem="{Binding SelectedNewHallType}"
-                            ItemDisplayBinding="{Binding .,
-                                Converter={StaticResource EnumDisplayConverter}}" />
+                            SelectedItem="{Binding HallType}"
+                            ItemDisplayBinding="{Binding ., Converter={StaticResource EnumDisplayConverter}}" />
+
                     <HorizontalStackLayout Spacing="10" HorizontalOptions="End">
-                        <Button Text="Save"
-                                Command="{Binding SaveNewHallCommand}" />
-                        <Button Text="Cancel"
-                                Command="{Binding CancelAddHallCommand}" />
+                        <Button Text="Save" Command="{Binding SubmitCommand}" />
+                        <Button Text="Cancel" Command="{Binding CancelCommand}" />
                     </HorizontalStackLayout>
+
                 </VerticalStackLayout>
             </Border>
 
             <!-- Halls List -->
             <CollectionView Grid.Row="2" ItemsSource="{Binding Halls}">
                 <CollectionView.EmptyView>
-                    <Label Text="No halls found." HorizontalOptions="Center" Margin="0,20" />
+                    <Label Text="No halls found."
+                           HorizontalOptions="Center"
+                           Margin="0,20" />
                 </CollectionView.EmptyView>
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="dto:HallListDTO">
                         <Border Margin="0,5" Padding="12">
                             <Grid ColumnDefinitions="*,Auto">
+
                                 <!-- Info — tap to navigate -->
                                 <VerticalStackLayout Grid.Column="0" Spacing="3">
                                     <VerticalStackLayout.GestureRecognizers>
@@ -55,12 +70,9 @@
                                                               Path=LoadHallDetailsCommand}"
                                             CommandParameter="{Binding Id}" />
                                     </VerticalStackLayout.GestureRecognizers>
-                                    <Label Text="{Binding Name}"
-                                           FontSize="16" FontAttributes="Bold" />
-                                    <Label Text="{Binding NumberOfSessions,
-                                                          StringFormat='Sessions: {0}'}" />
-                                    <Label Text="{Binding TotalDurationDisplay,
-                                                          StringFormat='Total duration: {0}'}" />
+                                    <Label Text="{Binding Name}" FontSize="16" FontAttributes="Bold" />
+                                    <Label Text="{Binding NumberOfSessions, StringFormat='Sessions: {0}'}" />
+                                    <Label Text="{Binding TotalDurationDisplay, StringFormat='Total duration: {0}'}" />
                                 </VerticalStackLayout>
 
                                 <!-- Delete Button -->
@@ -70,6 +82,7 @@
                                         Command="{Binding Source={RelativeSource AncestorType={x:Type vm:HallsViewModel}},
                                                           Path=DeleteHallCommand}"
                                         CommandParameter="{Binding Id}" />
+
                             </Grid>
                         </Border>
                     </DataTemplate>
@@ -83,6 +96,7 @@
                     IsVisible="{Binding IsAddingHall, Converter={StaticResource InvertedBoolConverter}}"
                     HorizontalOptions="Fill"
                     Margin="0,5,0,0" />
+
         </Grid>
 
         <!-- Loading Overlay -->
@@ -93,6 +107,7 @@
                                VerticalOptions="Center"
                                Color="{AppThemeBinding Light=Black, Dark=White}" />
         </Grid>
+
     </Grid>
 
 </ContentPage>

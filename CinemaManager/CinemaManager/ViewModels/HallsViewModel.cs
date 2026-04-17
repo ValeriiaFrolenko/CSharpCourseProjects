@@ -1,7 +1,7 @@
-﻿using CinemaManager.Common.Enums;
-using CinemaManager.DTOs.Halls;
+﻿using CinemaManager.DTOs.Halls;
 using CinemaManager.Pages;
 using CinemaManager.Services;
+using CinemaManager.ViewModels.Forms;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
@@ -11,14 +11,14 @@ namespace CinemaManager.ViewModels
     public partial class HallsViewModel : ObservableObject
     {
         private readonly IHallStorageService _hallStorageService;
-        private List<HallListDTO> _allHalls = new();
+        private List<HallListDTO> _allHalls = [];
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(IsNotBusy))]
         private bool _isBusy;
 
         [ObservableProperty]
-        private ObservableCollection<HallListDTO> _halls = new();
+        private ObservableCollection<HallListDTO> _halls = [];
 
         [ObservableProperty]
         private string _searchText = string.Empty;
@@ -26,23 +26,21 @@ namespace CinemaManager.ViewModels
         [ObservableProperty]
         private bool _isAddingHall;
 
-        [ObservableProperty]
-        private string _newHallName = string.Empty;
-
-        [ObservableProperty]
-        private string _newHallSeatsText = string.Empty;
-
-        [ObservableProperty]
-        private CinemaHallType _selectedNewHallType = CinemaHallType.Standard2D;
-
         public bool IsNotBusy => !IsBusy;
 
-        public IReadOnlyList<CinemaHallType> HallTypes { get; } =
-            Enum.GetValues<CinemaHallType>().ToList();
+        public HallFormViewModel AddForm { get; }
 
         public HallsViewModel(IHallStorageService hallStorageService)
         {
             _hallStorageService = hallStorageService;
+
+            AddForm = new HallFormViewModel();
+            AddForm.SubmitHandler = SaveNewHallAsync;
+            AddForm.CancelHandler = () =>
+            {
+                IsAddingHall = false;
+                AddForm.Reset();
+            };
         }
 
         partial void OnSearchTextChanged(string value) => ApplyFilter();
@@ -76,50 +74,11 @@ namespace CinemaManager.ViewModels
             await Shell.Current.GoToAsync($"{nameof(HallDetailsPage)}?id={hallId}");
         }
 
-
         [RelayCommand]
         private void ShowAddHallForm()
         {
-            NewHallName = string.Empty;
-            NewHallSeatsText = string.Empty;
-            SelectedNewHallType = CinemaHallType.Standard2D;
+            AddForm.Reset();
             IsAddingHall = true;
-        }
-
-        [RelayCommand]
-        private void CancelAddHall()
-        {
-            IsAddingHall = false;
-        }
-
-        [RelayCommand]
-        private async Task SaveNewHallAsync()
-        {
-            if (string.IsNullOrWhiteSpace(NewHallName))
-            {
-                await Shell.Current.DisplayAlert("Validation", "Hall name is required.", "OK");
-                return;
-            }
-
-            if (!int.TryParse(NewHallSeatsText, out int seats) || seats <= 0)
-            {
-                await Shell.Current.DisplayAlert("Validation",
-                    "Number of seats must be a positive integer.", "OK");
-                return;
-            }
-
-            IsBusy = true;
-            try
-            {
-                var input = new HallInputDTO(NewHallName.Trim(), seats, SelectedNewHallType);
-                await _hallStorageService.AddHallAsync(input);
-                IsAddingHall = false;
-                await LoadAsync();
-            }
-            finally
-            {
-                IsBusy = false;
-            }
         }
 
         [RelayCommand]
@@ -130,14 +89,34 @@ namespace CinemaManager.ViewModels
                 "This will also delete all sessions in this hall. Continue?",
                 "Delete", "Cancel");
 
-            if (!confirmed)
-                return;
+            if (!confirmed) return;
 
             IsBusy = true;
             try
             {
                 await _hallStorageService.DeleteHallAsync(hallId);
                 await LoadAsync();
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        private async Task SaveNewHallAsync()
+        {
+            IsBusy = true;
+            try
+            {
+                var input = new HallInputDTO(AddForm.Name.Trim(), AddForm.ParsedSeats, AddForm.HallType);
+                await _hallStorageService.AddHallAsync(input);
+                IsAddingHall = false;
+                AddForm.Reset();
+                await LoadAsync();
+            }
+            catch (Exception ex)
+            {
+                await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
             }
             finally
             {

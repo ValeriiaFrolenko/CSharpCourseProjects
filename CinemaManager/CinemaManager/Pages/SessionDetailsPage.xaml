@@ -2,16 +2,19 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:CinemaManager.ViewModels"
+             xmlns:forms="clr-namespace:CinemaManager.ViewModels.Forms"
              x:Class="CinemaManager.Pages.SessionDetailsPage"
              x:DataType="vm:SessionDetailsViewModel"
              Title="Session Details">
 
     <Grid>
+
         <ScrollView IsEnabled="{Binding IsNotBusy}">
             <VerticalStackLayout Padding="20" Spacing="15">
 
                 <!-- Display Mode -->
                 <VerticalStackLayout IsVisible="{Binding IsDisplayMode}" Spacing="12">
+
                     <Label Text="{Binding Session.MovieName, FallbackValue='Loading...'}"
                            Style="{StaticResource Headline}" />
 
@@ -20,8 +23,8 @@
                             <HorizontalStackLayout Spacing="8">
                                 <Label Text="Genre:" FontAttributes="Bold" />
                                 <Label Text="{Binding Session.FilmGenre,
-                                                      Converter={StaticResource EnumDisplayConverter},
-                                                      FallbackValue='N/A'}" />
+                                                       Converter={StaticResource EnumDisplayConverter},
+                                                       FallbackValue='N/A'}" />
                             </HorizontalStackLayout>
                             <HorizontalStackLayout Spacing="8">
                                 <Label Text="Year:" FontAttributes="Bold" />
@@ -30,48 +33,66 @@
                             <HorizontalStackLayout Spacing="8">
                                 <Label Text="Start:" FontAttributes="Bold" />
                                 <Label Text="{Binding Session.StartTime,
-                                                      StringFormat='{0:dd.MM.yyyy HH:mm}',
-                                                      FallbackValue='N/A'}" />
+                                                       StringFormat='{0:dd.MM.yyyy HH:mm}',
+                                                       FallbackValue='N/A'}" />
                             </HorizontalStackLayout>
                             <HorizontalStackLayout Spacing="8">
                                 <Label Text="End:" FontAttributes="Bold" />
                                 <Label Text="{Binding Session.EndTime,
-                                                      StringFormat='{0:dd.MM.yyyy HH:mm}',
-                                                      FallbackValue='N/A'}" />
+                                                       StringFormat='{0:dd.MM.yyyy HH:mm}',
+                                                       FallbackValue='N/A'}" />
                             </HorizontalStackLayout>
                             <HorizontalStackLayout Spacing="8">
                                 <Label Text="Duration:" FontAttributes="Bold" />
                                 <Label Text="{Binding Session.DurationInMinutes,
-                                                      StringFormat='{0} min',
-                                                      FallbackValue='N/A'}" />
+                                                       StringFormat='{0} min',
+                                                       FallbackValue='N/A'}" />
                             </HorizontalStackLayout>
                         </VerticalStackLayout>
                     </Border>
 
-                    <Button Text="Edit Session" Command="{Binding StartEditCommand}"
+                    <Button Text="Edit Session"
+                            Command="{Binding StartEditCommand}"
                             HorizontalOptions="Start" />
+
                 </VerticalStackLayout>
 
                 <!-- Edit Mode -->
                 <Border Padding="15" IsVisible="{Binding IsEditMode}">
-                    <VerticalStackLayout Spacing="8">
+                    <VerticalStackLayout Spacing="8"
+                                        BindingContext="{Binding EditForm}"
+                                        x:DataType="forms:SessionFormViewModel">
+
                         <Label Text="Edit Session" FontAttributes="Bold" FontSize="16" />
-                        <Entry Placeholder="Movie name" Text="{Binding EditMovieName}" />
+
+                        <Entry Placeholder="Movie name" Text="{Binding MovieName}" />
+                        <Label Text="{Binding MovieNameError}"
+                               TextColor="Red" FontSize="12"
+                               IsVisible="{Binding MovieNameError, Converter={StaticResource IsNotNullConverter}}" />
+
                         <Picker Title="Genre"
                                 ItemsSource="{Binding FilmGenres}"
-                                SelectedItem="{Binding EditGenre}"
-                                ItemDisplayBinding="{Binding .,
-                                    Converter={StaticResource EnumDisplayConverter}}" />
-                        <Entry Placeholder="Year of release" Text="{Binding EditYearText}"
-                               Keyboard="Numeric" />
-                        <DatePicker Date="{Binding EditDate}" />
-                        <TimePicker Time="{Binding EditTime}" />
-                        <Entry Placeholder="Duration (minutes)" Text="{Binding EditDurationText}"
-                               Keyboard="Numeric" />
+                                SelectedItem="{Binding Genre}"
+                                ItemDisplayBinding="{Binding ., Converter={StaticResource EnumDisplayConverter}}" />
+
+                        <Entry Placeholder="Year of release" Text="{Binding YearText}" Keyboard="Numeric" />
+                        <Label Text="{Binding YearError}"
+                               TextColor="Red" FontSize="12"
+                               IsVisible="{Binding YearError, Converter={StaticResource IsNotNullConverter}}" />
+
+                        <DatePicker Date="{Binding Date}" />
+                        <TimePicker Time="{Binding Time}" />
+
+                        <Entry Placeholder="Duration (minutes)" Text="{Binding DurationText}" Keyboard="Numeric" />
+                        <Label Text="{Binding DurationError}"
+                               TextColor="Red" FontSize="12"
+                               IsVisible="{Binding DurationError, Converter={StaticResource IsNotNullConverter}}" />
+
                         <HorizontalStackLayout Spacing="10" HorizontalOptions="End">
-                            <Button Text="Save" Command="{Binding SaveEditCommand}" />
-                            <Button Text="Cancel" Command="{Binding CancelEditCommand}" />
+                            <Button Text="Save" Command="{Binding SubmitCommand}" />
+                            <Button Text="Cancel" Command="{Binding CancelCommand}" />
                         </HorizontalStackLayout>
+
                     </VerticalStackLayout>
                 </Border>
 
@@ -86,6 +107,7 @@
                                VerticalOptions="Center"
                                Color="{AppThemeBinding Light=Black, Dark=White}" />
         </Grid>
+
     </Grid>
 
 </ContentPage>
