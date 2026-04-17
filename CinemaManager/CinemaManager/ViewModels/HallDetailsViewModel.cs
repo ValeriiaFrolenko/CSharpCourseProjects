@@ -129,6 +129,11 @@ namespace CinemaManager.ViewModels
                 await _sessionStorageService.DeleteSessionAsync(sessionId);
                 await LoadAsync();
             }
+            catch (Exception ex)
+            {
+                await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+                await LoadAsync();
+            }
             finally
             {
                 IsBusy = false;

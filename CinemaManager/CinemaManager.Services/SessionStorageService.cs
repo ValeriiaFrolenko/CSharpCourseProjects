@@ -29,18 +29,23 @@ namespace CinemaManager.Services
             return sessions.Select(s => new SessionListDTO(s.Id, s.MovieName, s.StartTime));
         }
 
-        public Task AddSessionAsync(Guid hallId, SessionInputDTO input)
+        public async Task AddSessionAsync(Guid hallId, SessionInputDTO input)
         {
+            await ValidateSessionOverlapAsync(hallId, input.StartTime, input.DurationInMinutes);
+
             var session = new SessionDBModel(hallId, input.MovieName, input.FilmGenre,
                 input.YearOfRelease, input.StartTime, input.DurationInMinutes);
-            return _sessionRepository.AddSessionAsync(session);
+
+            await _sessionRepository.AddSessionAsync(session);
         }
 
         public async Task UpdateSessionAsync(Guid id, SessionInputDTO input)
         {
             var session = await _sessionRepository.GetSessionByIdAsync(id);
             if (session is null)
-                return;
+                throw new KeyNotFoundException("Session not found.");
+
+            await ValidateSessionOverlapAsync(session.CinemaHallId, input.StartTime, input.DurationInMinutes, id);
 
             session.MovieName = input.MovieName;
             session.FilmGenre = input.FilmGenre;
@@ -53,5 +58,22 @@ namespace CinemaManager.Services
 
         public Task DeleteSessionAsync(Guid id) =>
             _sessionRepository.DeleteSessionAsync(id);
+
+        private async Task ValidateSessionOverlapAsync(Guid hallId, DateTime newStartTime, int duration, Guid? currentSessionId = null)
+        {
+            var existingSessions = await _sessionRepository.GetSessionsByHallIdAsync(hallId);
+            var newEndTime = newStartTime.AddMinutes(duration);
+
+            bool hasOverlap = existingSessions.Any(s =>
+                s.Id != currentSessionId &&
+                newStartTime < s.StartTime.AddMinutes(s.DurationInMinutes) &&
+                newEndTime > s.StartTime
+            );
+
+            if (hasOverlap)
+            {
+                throw new InvalidOperationException("The selected time overlaps with another session in this hall.");
+            }
+        }
     }
 }

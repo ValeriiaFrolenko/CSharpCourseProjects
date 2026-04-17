@@ -52,7 +52,7 @@ namespace CinemaManager.Services
         {
             var hall = await _hallRepository.GetHallByIdAsync(id);
             if (hall is null)
-                return;
+                throw new KeyNotFoundException("Hall not found.");
 
             hall.Name = input.Name;
             hall.NumberOfSeats = input.NumberOfSeats;
@@ -63,6 +63,10 @@ namespace CinemaManager.Services
 
         public async Task DeleteHallAsync(Guid id)
         {
+            var hall = await _hallRepository.GetHallByIdAsync(id);
+            if (hall is null)
+                throw new KeyNotFoundException("Hall not found.");
+
             await _sessionRepository.DeleteSessionsByHallIdAsync(id);
             await _hallRepository.DeleteHallAsync(id);
         }

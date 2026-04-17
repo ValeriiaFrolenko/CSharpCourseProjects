@@ -97,6 +97,11 @@ namespace CinemaManager.ViewModels
                 await _hallStorageService.DeleteHallAsync(hallId);
                 await LoadAsync();
             }
+            catch (Exception ex)
+            {
+                await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+                await LoadAsync();
+            }
             finally
             {
                 IsBusy = false;
