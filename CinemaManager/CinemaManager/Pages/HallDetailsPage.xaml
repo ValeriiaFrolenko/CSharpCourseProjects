@@ -2,48 +2,143 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:dto="clr-namespace:CinemaManager.DTOs.Sessions;assembly=CinemaManager.DTOs"
-             xmlns:local="clr-namespace:CinemaManager.Pages"
              xmlns:vm="clr-namespace:CinemaManager.ViewModels"
              x:Class="CinemaManager.Pages.HallDetailsPage"
              x:DataType="vm:HallDetailsViewModel"
              Title="Hall Details">
-    <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="20">
-            <Label Text="{Binding Hall.Name, FallbackValue='Loading...'}" Style="{StaticResource Headline}" />
-            <VerticalStackLayout Spacing="10">
-                <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
-                    <Label Text="Hall Type:" FontAttributes="Bold" />
-                    <Label Text="{Binding Hall.CinemaHallType,
-                                          Converter={StaticResource EnumDisplayConverter},
-                                          FallbackValue='N/A'}" />
-                </HorizontalStackLayout>
-                <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
-                    <Label Text="Number of Seats:" />
-                    <Label Text="{Binding Hall.NumberOfSeats, FallbackValue='N/A'}" />
-                </HorizontalStackLayout>
+
+    <Grid>
+        <ScrollView IsEnabled="{Binding IsNotBusy}">
+            <VerticalStackLayout Padding="20" Spacing="15">
+
+                <!-- Display Mode -->
+                <VerticalStackLayout IsVisible="{Binding IsDisplayMode}" Spacing="12">
+                    <Label Text="{Binding Hall.Name, FallbackValue='Loading...'}"
+                           Style="{StaticResource Headline}" />
+
+                    <VerticalStackLayout Spacing="6">
+                        <HorizontalStackLayout Spacing="8">
+                            <Label Text="Type:" FontAttributes="Bold" />
+                            <Label Text="{Binding Hall.CinemaHallType,
+                                                  Converter={StaticResource EnumDisplayConverter},
+                                                  FallbackValue='N/A'}" />
+                        </HorizontalStackLayout>
+                        <HorizontalStackLayout Spacing="8">
+                            <Label Text="Seats:" FontAttributes="Bold" />
+                            <Label Text="{Binding Hall.NumberOfSeats, FallbackValue='N/A'}" />
+                        </HorizontalStackLayout>
+                        <HorizontalStackLayout Spacing="8">
+                            <Label Text="Total duration:" FontAttributes="Bold" />
+                            <Label Text="{Binding Hall.TotalDurationDisplay, FallbackValue='N/A'}" />
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+
+                    <Button Text="Edit Hall" Command="{Binding StartEditCommand}"
+                            HorizontalOptions="Start" />
+                </VerticalStackLayout>
+
+                <!--Edit Mode -->
+                <Border Padding="15" IsVisible="{Binding IsEditMode}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Edit Hall" FontAttributes="Bold" FontSize="16" />
+                        <Entry Placeholder="Hall name" Text="{Binding EditName}" />
+                        <Entry Placeholder="Number of seats" Text="{Binding EditSeatsText}"
+                               Keyboard="Numeric" />
+                        <Picker Title="Hall type"
+                                ItemsSource="{Binding HallTypes}"
+                                SelectedItem="{Binding EditHallType}"
+                                ItemDisplayBinding="{Binding .,
+                                    Converter={StaticResource EnumDisplayConverter}}" />
+                        <HorizontalStackLayout Spacing="10" HorizontalOptions="End">
+                            <Button Text="Save" Command="{Binding SaveEditCommand}" />
+                            <Button Text="Cancel" Command="{Binding CancelEditCommand}" />
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <BoxView HeightRequest="1" Margin="0,5" />
+
+                <!-- Sessions Section -->
+                <Label Text="Sessions" FontSize="18" FontAttributes="Bold" />
+
+                <SearchBar Placeholder="Search sessions..."
+                           Text="{Binding SearchText}" />
+
+                <!-- Add Session Form -->
+                <Border Padding="15" IsVisible="{Binding IsAddingSession}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="New Session" FontAttributes="Bold" FontSize="16" />
+                        <Entry Placeholder="Movie name" Text="{Binding NewSessionMovieName}" />
+                        <Picker Title="Genre"
+                                ItemsSource="{Binding FilmGenres}"
+                                SelectedItem="{Binding SelectedNewSessionGenre}"
+                                ItemDisplayBinding="{Binding .,
+                                    Converter={StaticResource EnumDisplayConverter}}" />
+                        <Entry Placeholder="Year of release" Text="{Binding NewSessionYearText}"
+                               Keyboard="Numeric" />
+                        <DatePicker Date="{Binding NewSessionDate}" />
+                        <TimePicker Time="{Binding NewSessionTime}" />
+                        <Entry Placeholder="Duration (minutes)" Text="{Binding NewSessionDurationText}"
+                               Keyboard="Numeric" />
+                        <HorizontalStackLayout Spacing="10" HorizontalOptions="End">
+                            <Button Text="Save" Command="{Binding SaveNewSessionCommand}" />
+                            <Button Text="Cancel" Command="{Binding CancelAddSessionCommand}" />
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Sessions List -->
+                <CollectionView ItemsSource="{Binding Sessions}">
+                    <CollectionView.EmptyView>
+                        <Label Text="No sessions found." HorizontalOptions="Center" Margin="0,10" />
+                    </CollectionView.EmptyView>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="dto:SessionListDTO">
+                            <Border Padding="12" Margin="0,4">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <VerticalStackLayout Grid.Column="0" Spacing="3">
+                                        <VerticalStackLayout.GestureRecognizers>
+                                            <TapGestureRecognizer
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:HallDetailsViewModel}},
+                                                                  Path=LoadSessionDetailsCommand}"
+                                                CommandParameter="{Binding Id}" />
+                                        </VerticalStackLayout.GestureRecognizers>
+                                        <Label Text="{Binding MovieName, FallbackValue='Unknown'}"
+                                               FontAttributes="Bold" />
+                                        <Label Text="{Binding StartTime,
+                                                              StringFormat='{0:dd.MM.yyyy HH:mm}',
+                                                              FallbackValue='TBA'}" />
+                                    </VerticalStackLayout>
+                                    <Button Grid.Column="1"
+                                            Text="Delete"
+                                            VerticalOptions="Center"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:HallDetailsViewModel}},
+                                                              Path=DeleteSessionCommand}"
+                                            CommandParameter="{Binding Id}" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <!-- Add Session Button -->
+                <Button Text="+ Add Session"
+                        Command="{Binding ShowAddSessionFormCommand}"
+                        IsVisible="{Binding IsAddingSession,
+                                            Converter={StaticResource InvertedBoolConverter}}"
+                        HorizontalOptions="Fill" />
+
             </VerticalStackLayout>
-            <BoxView HeightRequest="1" Margin="0,10" />
-            <Label Text="Sessions Schedule:" />
-            <CollectionView ItemsSource="{Binding Sessions}">
-                <CollectionView.EmptyView>
-                    <Label Text="No sessions scheduled" />
-                </CollectionView.EmptyView>
-                <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="dto:SessionListDTO">
-                        <Border Padding="15" Margin="0,5">
-                            <Border.GestureRecognizers>
-                                <TapGestureRecognizer 
-                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:HallDetailsViewModel}}, Path=LoadSessionDetailsCommand}" 
-                                    CommandParameter="{Binding Id}"/>
-                            </Border.GestureRecognizers>
-                            <VerticalStackLayout Spacing="5">
-                                <Label Text="{Binding MovieName, FallbackValue='Unknown Movie'}" HorizontalOptions="Center"/>
-                                <Label Text="{Binding StartTime, StringFormat='{0:dd.MM.yyyy HH:mm}', FallbackValue='TBA'}" HorizontalOptions="Center"/>
-                            </VerticalStackLayout>
-                        </Border>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-        </VerticalStackLayout>
-    </ScrollView>
+        </ScrollView>
+
+        <!-- Loading Overlay -->
+        <Grid IsVisible="{Binding IsBusy}"
+              BackgroundColor="{AppThemeBinding Light=#80FFFFFF, Dark=#80000000}">
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               Color="{AppThemeBinding Light=Black, Dark=White}" />
+        </Grid>
+    </Grid>
+
 </ContentPage>

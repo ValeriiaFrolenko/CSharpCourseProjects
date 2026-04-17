@@ -1,31 +1,98 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:local="clr-namespace:CinemaManager.Pages"
              xmlns:dto="clr-namespace:CinemaManager.DTOs.Halls;assembly=CinemaManager.DTOs"
              xmlns:vm="clr-namespace:CinemaManager.ViewModels"
              x:Class="CinemaManager.Pages.HallsPage"
              x:DataType="vm:HallsViewModel"
-             Title="Halls Page">
+             Title="Cinema Halls">
 
-    <Grid Padding="15">
-        <CollectionView ItemsSource="{Binding Halls}">
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="dto:HallListDTO">
-                    <Border Margin="0,5" Padding="10">
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer 
-                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:HallsViewModel}}, Path=LoadHallDetailsCommand}" 
-                                CommandParameter="{Binding Id}"/>
-                        </Border.GestureRecognizers>
-                        <VerticalStackLayout>
-                            <Label Text="{Binding Name}" FontSize="16" FontAttributes="Bold" HorizontalOptions="Center"/>
-                            <Label Text="{Binding NumberOfSessions, StringFormat='Sessions: {0}'}" HorizontalOptions="Center"/>
-                        </VerticalStackLayout>
-                    </Border>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
+    <Grid>
+        <!-- Main Content -->
+        <Grid RowDefinitions="Auto,Auto,*,Auto" Padding="15" RowSpacing="10"
+              IsEnabled="{Binding IsNotBusy}">
+
+            <!-- Search Bar -->
+            <SearchBar Grid.Row="0"
+                       Placeholder="Search halls..."
+                       Text="{Binding SearchText}" />
+
+            <!-- Add Hall Form -->
+            <Border Grid.Row="1" Padding="15" IsVisible="{Binding IsAddingHall}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="New Hall" FontAttributes="Bold" FontSize="16" />
+                    <Entry Placeholder="Hall name" Text="{Binding NewHallName}" />
+                    <Entry Placeholder="Number of seats" Text="{Binding NewHallSeatsText}"
+                           Keyboard="Numeric" />
+                    <Picker Title="Hall type"
+                            ItemsSource="{Binding HallTypes}"
+                            SelectedItem="{Binding SelectedNewHallType}"
+                            ItemDisplayBinding="{Binding .,
+                                Converter={StaticResource EnumDisplayConverter}}" />
+                    <HorizontalStackLayout Spacing="10" HorizontalOptions="End">
+                        <Button Text="Save"
+                                Command="{Binding SaveNewHallCommand}" />
+                        <Button Text="Cancel"
+                                Command="{Binding CancelAddHallCommand}" />
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Halls List -->
+            <CollectionView Grid.Row="2" ItemsSource="{Binding Halls}">
+                <CollectionView.EmptyView>
+                    <Label Text="No halls found." HorizontalOptions="Center" Margin="0,20" />
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="dto:HallListDTO">
+                        <Border Margin="0,5" Padding="12">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <!-- Info — tap to navigate -->
+                                <VerticalStackLayout Grid.Column="0" Spacing="3">
+                                    <VerticalStackLayout.GestureRecognizers>
+                                        <TapGestureRecognizer
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:HallsViewModel}},
+                                                              Path=LoadHallDetailsCommand}"
+                                            CommandParameter="{Binding Id}" />
+                                    </VerticalStackLayout.GestureRecognizers>
+                                    <Label Text="{Binding Name}"
+                                           FontSize="16" FontAttributes="Bold" />
+                                    <Label Text="{Binding NumberOfSessions,
+                                                          StringFormat='Sessions: {0}'}" />
+                                    <Label Text="{Binding TotalDurationDisplay,
+                                                          StringFormat='Total duration: {0}'}" />
+                                </VerticalStackLayout>
+
+                                <!-- Delete Button -->
+                                <Button Grid.Column="1"
+                                        Text="Delete"
+                                        VerticalOptions="Center"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:HallsViewModel}},
+                                                          Path=DeleteHallCommand}"
+                                        CommandParameter="{Binding Id}" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <!-- Add Hall Button -->
+            <Button Grid.Row="3"
+                    Text="+ Add Hall"
+                    Command="{Binding ShowAddHallFormCommand}"
+                    IsVisible="{Binding IsAddingHall, Converter={StaticResource InvertedBoolConverter}}"
+                    HorizontalOptions="Fill"
+                    Margin="0,5,0,0" />
+        </Grid>
+
+        <!-- Loading Overlay -->
+        <Grid IsVisible="{Binding IsBusy}"
+              BackgroundColor="{AppThemeBinding Light=#80FFFFFF, Dark=#80000000}">
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               Color="{AppThemeBinding Light=Black, Dark=White}" />
+        </Grid>
     </Grid>
 
 </ContentPage>
