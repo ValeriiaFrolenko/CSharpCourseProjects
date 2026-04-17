@@ -11,7 +11,7 @@
     <Grid>
 
         <!-- Main Content -->
-        <Grid RowDefinitions="Auto,Auto,*,Auto"
+        <Grid RowDefinitions="Auto,Auto,Auto,*,Auto"
               Padding="15"
               RowSpacing="10"
               IsEnabled="{Binding IsNotBusy}">
@@ -21,8 +21,15 @@
                        Placeholder="Search halls..."
                        Text="{Binding SearchText}" />
 
+            <!-- Sort Picker -->
+            <Picker Grid.Row="1"
+                    Title="Sort by"
+                    ItemsSource="{Binding SortOptions}"
+                    SelectedItem="{Binding SelectedSortOption}"
+                    ItemDisplayBinding="{Binding ., Converter={StaticResource EnumDisplayConverter}}" />
+
             <!-- Add Hall Form -->
-            <Border Grid.Row="1" Padding="15" IsVisible="{Binding IsAddingHall}">
+            <Border Grid.Row="2" Padding="15" IsVisible="{Binding IsAddingHall}">
                 <VerticalStackLayout Spacing="8" BindingContext="{Binding AddForm}" x:DataType="forms:HallFormViewModel">
 
                     <Label Text="New Hall" FontAttributes="Bold" FontSize="16" />
@@ -51,7 +58,7 @@
             </Border>
 
             <!-- Halls List -->
-            <CollectionView Grid.Row="2" ItemsSource="{Binding Halls}">
+            <CollectionView Grid.Row="3" ItemsSource="{Binding Halls}">
                 <CollectionView.EmptyView>
                     <Label Text="No halls found."
                            HorizontalOptions="Center"
@@ -62,7 +69,6 @@
                         <Border Margin="0,5" Padding="12">
                             <Grid ColumnDefinitions="*,Auto">
 
-                                <!-- Info — tap to navigate -->
                                 <VerticalStackLayout Grid.Column="0" Spacing="3">
                                     <VerticalStackLayout.GestureRecognizers>
                                         <TapGestureRecognizer
@@ -75,7 +81,6 @@
                                     <Label Text="{Binding TotalDurationDisplay, StringFormat='Total duration: {0}'}" />
                                 </VerticalStackLayout>
 
-                                <!-- Delete Button -->
                                 <Button Grid.Column="1"
                                         Text="Delete"
                                         VerticalOptions="Center"
@@ -90,7 +95,7 @@
             </CollectionView>
 
             <!-- Add Hall Button -->
-            <Button Grid.Row="3"
+            <Button Grid.Row="4"
                     Text="+ Add Hall"
                     Command="{Binding ShowAddHallFormCommand}"
                     IsVisible="{Binding IsAddingHall, Converter={StaticResource InvertedBoolConverter}}"

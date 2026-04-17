@@ -1,20 +1,25 @@
+
 # Cinema Manager
 
-.NET MAUI app for managing cinema halls and movie sessions with MVVM architecture and IoC.
+.NET MAUI app for managing cinema halls and movie sessions with MVVM architecture, IoC, and SQLite database.
 
 ## Features
 
+- Full CRUD (Create, Read, Update, Delete) for cinema halls and movie sessions
+- Search and filter halls and sessions by name
 - View list of cinema halls
 - View hall details (type, capacity) with sessions schedule
 - View session details (movie, genre, start/end time, duration)
+- Asynchronous UI interactions with progress indicators (`IsBusy`)
 
 ## Architecture
 
 **3-tier architecture with clear separation of concerns:**
 
-### Layer 1: Repositories
-- **CinemaManager.Storage** - In-memory data storage
+### Layer 1: Repositories & Storage
+- **CinemaManager.Storage** - Asynchronous SQLite data storage
 - **CinemaManager.Repositories** - Data access through interfaces
+- **CinemaManager.Entities** - SQLite database entities
 - **CinemaManager.DBModels** - Database models (HallDBModel, SessionDBModel)
 
 Returns DB Models.
@@ -24,8 +29,10 @@ Returns DB Models.
 - **CinemaManager.DTOs** - Data Transfer Objects:
   - `HallListDTO` - for list view (Id, Name, NumberOfSessions)
   - `HallDetailsDTO` - for details (Id, Name, NumberOfSeats, CinemaHallType)
+  - `HallInputDTO` - for adding/editing halls
   - `SessionListDTO` - for session list (Id, MovieName, StartTime)
   - `SessionDetailsDTO` - full details (all fields + computed EndTime)
+  - `SessionInputDTO` - for adding/editing sessions
 
 Converts DB Models → DTO Models.
 
@@ -40,30 +47,33 @@ Works only with Services and DTOs. No direct access to Repositories or DB Models
 - **MVVM** - Views (.xaml), ViewModels (logic), Code-behind (InitializeComponent + BindingContext only)
 - **Dependency Injection** - All dependencies via constructor, registered in CompositionRoot
 - **SOLID** - Dependency Inversion (interfaces), Single Responsibility, Separation of Concerns
+- **Asynchronous Programming** - Async/await pattern for all database operations to prevent UI blocking
 
 ## Project Structure
 
 ```
 CinemaManager/
 ├── CinemaManager              # Main MAUI app (Pages, ViewModels, Navigation)
+├── CinemaManager.Entities     # SQLite entities mapping
 ├── CinemaManager.DBModels     # DB models
 ├── CinemaManager.DTOs         # Data Transfer Objects
 ├── CinemaManager.Repositories # Data access interfaces + implementations
 ├── CinemaManager.Services     # Business logic interfaces + implementations
-├── CinemaManager.Storage      # In-memory storage
+├── CinemaManager.Storage      # SQLite storage context
 └── CinemaManager.Common       # Shared enums
 ```
 
 ## Initial Data
 
+Automatically seeded into the SQLite database (`cinema.db`) on the first run:
 - **3 halls:** IMAX (250 seats), VIP (50 seats), Standard 2D (150 seats)
 - **12 sessions:** Avatar, Dune, Oppenheimer, Interstellar, Inception, The Dark Knight, etc.
 
 ## Navigation
 
-1. **HallsPage** - list of all halls
-2. Tap hall → **HallDetailsPage** - hall details + sessions
-3. Tap session → **SessionDetailsPage** - full session info
+1. **HallsPage** - list of all halls (search, add, delete)
+2. Tap hall → **HallDetailsPage** - hall details + sessions (edit hall, add/delete sessions)
+3. Tap session → **SessionDetailsPage** - full session info (edit session)
 
 Routes: `HallsPage` → `HallsPage/HallDetailsPage` → `HallsPage/HallDetailsPage/SessionDetailsPage`
 
@@ -77,7 +87,8 @@ Routes: `HallsPage` → `HallsPage/HallDetailsPage` → `HallsPage/HallDetailsPa
 
 ## Tech Stack
 
-- .NET MAUI
+- .NET MAUI (.NET 9.0)
 - C# 12
+- SQLite (sqlite-net-pcl)
 - CommunityToolkit.Mvvm
 - Microsoft.Extensions.DependencyInjection

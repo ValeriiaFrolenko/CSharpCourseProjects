@@ -81,6 +81,12 @@
                 <SearchBar Placeholder="Search sessions..."
                            Text="{Binding SearchText}" />
 
+                <!-- Sort Picker -->
+                <Picker Title="Sort by"
+                        ItemsSource="{Binding SortOptions}"
+                        SelectedItem="{Binding SelectedSortOption}"
+                        ItemDisplayBinding="{Binding ., Converter={StaticResource EnumDisplayConverter}}" />
+
                 <!-- Add Session Form -->
                 <Border Padding="15" IsVisible="{Binding IsAddingSession}">
                     <VerticalStackLayout Spacing="8"

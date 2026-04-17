@@ -1,4 +1,5 @@
-﻿using CinemaManager.DTOs.Halls;
+﻿using CinemaManager.Common.Enums;
+using CinemaManager.DTOs.Halls;
 using CinemaManager.Pages;
 using CinemaManager.Services;
 using CinemaManager.ViewModels.Forms;
@@ -26,9 +27,14 @@ namespace CinemaManager.ViewModels
         [ObservableProperty]
         private bool _isAddingHall;
 
+        [ObservableProperty]
+        private HallSortOption _selectedSortOption = HallSortOption.NameAscending;
+
         public bool IsNotBusy => !IsBusy;
 
         public HallFormViewModel AddForm { get; }
+
+        public IReadOnlyList<HallSortOption> SortOptions { get; } = Enum.GetValues<HallSortOption>().ToList();
 
         public HallsViewModel(IHallStorageService hallStorageService)
         {
@@ -44,6 +50,8 @@ namespace CinemaManager.ViewModels
         }
 
         partial void OnSearchTextChanged(string value) => ApplyFilter();
+
+        partial void OnSelectedSortOptionChanged(HallSortOption value) => ApplyFilter();
 
         public async Task LoadAsync()
         {
@@ -65,6 +73,15 @@ namespace CinemaManager.ViewModels
                 ? _allHalls
                 : _allHalls.Where(h =>
                     h.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase));
+
+            filtered = SelectedSortOption switch
+            {
+                HallSortOption.NameDescending => filtered.OrderByDescending(h => h.Name),
+                HallSortOption.SessionsCountAscending => filtered.OrderBy(h => h.NumberOfSessions),
+                HallSortOption.SessionsCountDescending => filtered.OrderByDescending(h => h.NumberOfSessions),
+                _ => filtered.OrderBy(h => h.Name)
+            };
+
             Halls = new ObservableCollection<HallListDTO>(filtered);
         }
 

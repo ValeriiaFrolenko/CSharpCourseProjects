@@ -1,4 +1,5 @@
-﻿using CinemaManager.DTOs.Halls;
+﻿using CinemaManager.Common.Enums;
+using CinemaManager.DTOs.Halls;
 using CinemaManager.DTOs.Sessions;
 using CinemaManager.Pages;
 using CinemaManager.Services;
@@ -36,11 +37,18 @@ namespace CinemaManager.ViewModels
         [ObservableProperty]
         private bool _isAddingSession;
 
+        [ObservableProperty]
+        private SessionSortOption _selectedSortOption = SessionSortOption.StartTimeAscending;
+
         public bool IsNotBusy => !IsBusy;
+
         public bool IsDisplayMode => !IsEditMode;
 
         public HallFormViewModel EditForm { get; }
+
         public SessionFormViewModel AddSessionForm { get; }
+
+        public IReadOnlyList<SessionSortOption> SortOptions { get; } = Enum.GetValues<SessionSortOption>().ToList();
 
         public HallDetailsViewModel(
             IHallStorageService hallStorageService,
@@ -69,6 +77,8 @@ namespace CinemaManager.ViewModels
 
         partial void OnSearchTextChanged(string value) => ApplyFilter();
 
+        partial void OnSelectedSortOptionChanged(SessionSortOption value) => ApplyFilter();
+
         public async Task LoadAsync()
         {
             IsBusy = true;
@@ -90,8 +100,16 @@ namespace CinemaManager.ViewModels
                 ? _allSessions
                 : _allSessions.Where(s =>
                     s.MovieName.Contains(SearchText, StringComparison.OrdinalIgnoreCase));
-            Sessions = new ObservableCollection<SessionListDTO>(
-                filtered.OrderBy(s => s.StartTime));
+
+            filtered = SelectedSortOption switch
+            {
+                SessionSortOption.StartTimeDescending => filtered.OrderByDescending(s => s.StartTime),
+                SessionSortOption.MovieNameAscending => filtered.OrderBy(s => s.MovieName),
+                SessionSortOption.MovieNameDescending => filtered.OrderByDescending(s => s.MovieName),
+                _ => filtered.OrderBy(s => s.StartTime)
+            };
+
+            Sessions = new ObservableCollection<SessionListDTO>(filtered);
         }
 
         [RelayCommand]
